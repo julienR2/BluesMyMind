@@ -1,0 +1,132 @@
+#!/usr/bin/perl
+# -*- mode: Perl; tab-width: 4; -*-
+# vim: ts=4 sw=4 noet
+
+use warnings;
+use strict;
+
+use Fcntl qw(:DEFAULT :seek);
+use POSIX qw(:errno_h);
+
+my $dryrun = 0;
+if (@ARGV == 1 && $ARGV[0] eq '--dry-run') {
+	$dryrun = 1;
+} elsif (@ARGV) {
+	die "Usage: $0 [--dry-run]\n";
+}
+
+if ($> != 0 && !$dryrun) {
+	die "$0 can only be run as root, except in --dry-run mode.\n";
+}
+
+### KEEP THIS IN SYNC WITH lockwait.in !!! ###
+
+my $basepath = "@PREFIX@";		# Path prefix for dpkg
+my $timeout = 5 * 60;			# Seconds to wait before failing
+my $debug = 0;					# Print nice debug messages?
+
+if ($> == 0 && !$dryrun) {
+	print STDERR "We're root, gonna pre-lock\n" if $debug;
+
+	print STDERR "Opening the lockfile\n" if $debug;
+	my $lockfile = "$basepath/var/lib/dpkg/lock";
+	open LOCK, ">$lockfile" or die "lockwait: Can't open: $!";
+	
+	print STDERR "Locking it\n" if $debug;
+	### Note this pack() is specific  to OS X and Darwin!!!
+	# fcntl.h declares:
+	#   struct flock {
+	#       off_t   l_start;    /* starting offset */
+	#       off_t   l_len;      /* len = 0 means until end of file */
+	#       pid_t   l_pid;      /* lock owner */
+	#       short   l_type;     /* lock type: read/write, etc. */
+	#       short   l_whence;   /* type of l_start */
+	#   };
+	my $struct_flock = pack("lllliss", (0, 0), (0, 0), 0, F_WRLCK, SEEK_SET);
+	my $lock_ok = fcntl(LOCK, F_SETLK, $struct_flock);
+	unless ($lock_ok || $! == EOPNOTSUPP || $! == ENOLCK) {
+		die "lockwait: Can't get lock: $!" unless $! == EAGAIN || $! == EACCES;
+		
+		my $msg = $timeout ? "up to $timeout seconds " : "";
+		print STDERR "Waiting ${msg}for access to the dpkg database... ";
+		eval {
+			local $SIG{ALRM} = sub { die "alarm\n" };
+			alarm $timeout if $timeout;
+			print STDERR "Waiting for lock, timeout = $timeout\n" if $debug;
+			($lock_ok = fcntl(LOCK, F_SETLKW, $struct_flock)) or
+				die "lockwait: Can't get lock or wait: $!";
+			alarm 0;
+		};
+		if ($@) {
+			die unless $@ eq "alarm\n";
+			print STDERR "\nTimed out, cancelling operation!\n";
+			exit(1);
+		}
+		print STDERR "done.\n";
+	}
+	print STDERR "Got the lock\n" if $debug && $lock_ok;
+	print STDERR "WARNING: No locking is available on this filesystem.\n" .
+		"To ensure safety, do not run multiple instances simultaneously.\n"
+		if !$lock_ok;
+}
+
+### END OF lockwait.in INCLUDED CODE ###
+
+my $status_file = $basepath . '/var/lib/dpkg/status';
+my $status_back = $status_file . '.' . time . '.' . $$;
+my $status_temp = $status_file . '.new';
+
+umask 0022;
+
+open my $status_old, '<', $status_file or die "Couldn't read $status_file: $!\n";
+
+my $status_new;  # filehandle
+if (!$dryrun) {
+	open $status_new, '>', $status_temp or die "Couldn't write $status_temp: $!\n";
+
+	$debug && print "processing $status_file -> $status_temp\n";
+}
+
+my $para = '';
+my $omit = 0;
+my ($cnt_omit, $cnt_keep) = (0,0);
+while (defined(my $line = <$status_old>)) {
+    $para .= $line;
+    if ($line =~ /\As*\Z/ or eof($status_old)) {
+		# end of paragraph...store if not flagged to omit
+		if ($omit) {
+			$cnt_omit++;
+			$debug && print "=====\nomit:\n-----\n$para";
+		} else {
+			$cnt_keep++;
+			$debug && print "=====\nkeep:\n-----\n$para";
+			print $status_new $para if !$dryrun;  # write to new database
+		}
+		$omit = 0;
+		$para = '';
+    } else {
+		# some random paragraph line...
+		if ($line eq "Status: purge ok not-installed\n") {
+			$omit = 1;  # package is purged...flag to omit it
+		}
+    }
+}
+
+close $status_old;
+
+if (!$dryrun) {
+	close $status_new;
+
+	$debug && print "=====\nrename $status_file -> $status_back\n";
+	rename $status_file, $status_back or die "Couldn't rename $status_file to $status_back\n";
+
+	$debug && print "rename $status_temp -> $status_file\n";
+	rename $status_temp, $status_file or die "Couldn't install $status_temp as $status_file\n";
+}
+
+print "$status_file cleanup:\n\tkeep $cnt_keep\n\tomit $cnt_omit\n";
+
+if (!$dryrun) {
+}
+
+exit 0;

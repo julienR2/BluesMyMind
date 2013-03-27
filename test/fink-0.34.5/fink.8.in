@@ -1,0 +1,773 @@
+.\" -*- nroff -*-
+.Dd April 2012
+.Dt FINK 8
+.Sh NAME
+.Nm fink
+.Nd a package management system
+.Sh SYNOPSIS
+.Nm
+.Op Ar options
+.Ar command
+.Op Ar command-options
+.Op Ar package
+.\"
+.\"
+.\" DESCRIPTION
+.\"
+.\"
+.Sh DESCRIPTION
+.Nm
+is a package management system that aims to bring the full world
+of GNU and other common Open Source software to Darwin and Mac OS X.
+.Pp
+With the help of
+.Xr dpkg 8
+and
+.Xr apt 8
+it maintains a separate directory hierarchy. It
+downloads original source releases, patches them if neccessary, configures
+them for Darwin and compiles and installs them. The information about
+available packages and the neccessary patches are included with this
+distribution, everything else is downloaded off the Internet.
+.\"
+.\"
+.\" OPTIONS
+.\"
+.\"
+.Sh OPTIONS
+.Bl -tag -width flag
+.It Cm -h, --help
+Display help text.
+.It Cm -q, --quiet
+Causes
+.Nm
+to be less verbose, opposite of
+.Cm --verbose
+.It Cm -V, --version
+Display
+.Nm
+version information.
+.It Cm -v, --verbose
+Causes
+.Nm
+to be more verbose, opposite of
+.Cm --quiet
+.It Cm -y, --yes
+Assume default answer for all interactive questions
+.It Cm -K, --keep-root-dir
+Causes
+.Nm
+not to delete the temporary installation directory
+.Pa root-[name]-[version]-[revision]
+in the
+.Cm Buildpath
+(see the
+.Cm fink.conf
+manpage) after building a package.
+.It Cm -k, --keep-build-dir
+Causes
+.Nm
+not to delete the package compile directory
+.Pa [name]-[version]-[revision]
+in the
+.Cm Buildpath
+(see the
+.Cm fink.conf
+manpage) after building a package.
+.It Cm -b, --use-binary-dist
+Download pre-compiled binary packages from the binary distribution
+if available and if deb is not already on the system
+.Pp
+Note that this mode instructs
+.Nm
+to download the version it wants if
+that version is available for download; it does not cause
+.Nm
+to
+choose a version based on its binary availability.
+.It Cm --no-use-binary-dist
+Don't use pre-compiled binary packages from the binary distribution,
+opposite of the
+.Cm --use-binary-dist
+flag. This is the default unless overridden by a setting in
+.Pa fink.conf
+configuration file.
+.It Cm --build-as-nobody
+Drop to a non-root user when performing the unpack, patch, compile,
+and install phases.  This is the default behavior unless overridden
+by a
+.Pa BuildAsNobody: false
+directive in a .info file, or if the
+.Cm --no-build-as-nobody
+flag is used.
+.It Cm --no-build-as-nobody
+Force the the unpack, patch, compile, and install phases to be 
+performed as root.
+.It Cm -m, --maintainer
+Perform actions useful to package maintainers: run validation on
+the .info file before building and on the .deb after building a
+package; turn certain build-time warnings into fatal errors; run the
+test suites as specified in the InfoTest field.  This sets
+.Pa --tests
+and
+.Pa --validate
+to
+.Pa on .
+.It Cm --tests[=on|off|warn]
+Causes InfoTest fields to be activated and test suites specified via
+TestScript to be executed.  If no argument is given to this option or if the
+argument is
+.Pa on
+then failures in test suites will be considered fatal errors during builds.
+If the argument is
+.Pa warn
+then failures will be treated as warnings.
+.It Cm --validate[=on|off|warn]
+Causes packages to be validated during a build.
+If no argument is given to this option or if the argument is
+.Pa on
+then validation failures will be considered fatal errors during builds.
+If the argument is
+.Pa warn
+then failures will be treated as warnings.
+.It Cm -l, --log-output
+Save a copy of the terminal output during each package building
+process. By default, the file is stored in
+.Pa /tmp/fink-build-log_[name]-[version]-[revision]_[date]-[time]
+but one can use the
+.Cm --logfile
+flag to specify an alternate filename.
+.It Cm --no-log-output
+Don't save a copy of the output during package-building, opposite of the
+.Cm --log-output
+flag. This is the default.
+.It Cm --logfile=filename
+Save package build logs to the file
+.Pa filename
+instead of the default file (see the
+.Cm --log-output
+flag, which is implicitly set by the
+.Cm --logfile
+flag). You can use percent-expansion codes to include specific package
+information automatically. A complete list of percent-expanions is
+available in the Fink Packaging Manual; some common percent-expansions
+are:
+.Bl -tag -width flag -offset indent -compact
+.It Cm %n
+package name
+.It Cm %v
+package version
+.It Cm %r
+package revision
+.El
+.It Cm -t, --trees=expr
+Consider only packages in trees matching
+.Pa expr .
+.Pp
+The format of
+.Pa expr
+is a comma-delimited list of tree specifications. Trees listed in
+.Pa fink.conf
+are compared against
+.Pa expr .
+Only those which match at least one tree specification are considered by
+.Nm fink,
+in the order of the first specifications which they match. If no
+.Cm --trees
+option is used, all trees listed in
+.Pa fink.conf
+are included in order.
+.Pp
+A tree specification
+may contain a slash
+.Pq /
+character, in which case it requires an exact match with a tree. Otherwise, it
+matches against the first path-element of a tree. For example,
+.Cm --trees=unstable/main
+would match only the
+.Cm unstable/main
+tree, while
+.Cm --trees=unstable
+would match both
+.Cm unstable/main
+and
+.Cm unstable/crypto .
+.Pp
+There exist magic tree specifications which can be included in
+.Pa expr :
+.Bl -tag -width flag -offset indent
+.It Cm status
+Includes packages in the dpkg status database.
+.It Cm virtual
+Includes virtual packages which reflect the capabilities of the system.
+.El
+.Pp
+Exclusion (or failure to include) these magic trees is currently only supported
+for operations which do not install or remove packages.
+.It Cm -T, --exclude-trees=expr
+Consider only packages in trees not matching
+.Pa expr .
+.Pp
+The syntax of
+.Pa expr
+is the same as for
+.Cm --trees ,
+including the magic tree specifications. However, matching trees are here
+excluded rather than included. Note that trees matching both
+.Cm --trees
+and
+.Cm --exclude-trees
+are excluded.
+.Pp
+Examples of
+.Cm --trees
+and
+.Cm --exclude-trees :
+.Bl -tag -width flag -offset indent
+.It Cm fink --trees=stable,virtual,status install foo
+Install
+.Cm foo
+as if
+.Nm
+was using the stable tree, even if unstable is enabled in
+.Pa fink.conf .
+.It Cm fink --exclude-trees=local install foo
+Install the version of
+.Cm foo
+in
+.Nm
+, not the locally modified version.
+.It Cm fink --trees=local/main list -i
+List the locally modified packages which are installed.
+.El
+.El
+.\"
+.\"
+.\" COMMANDS
+.\"
+.\"
+.Sh COMMANDS
+.Nm
+has several commands that work on packages. All of them need at least
+one package name, and all can handle several package names at once. You can
+specify just the package name (e.g. gimp), or a fully qualified name with a
+version number (e.g. gimp-1.2.1 or gimp-1.2.1-3).
+.Nm
+will automatically
+choose the latest available version and revision when they are not
+specified.
+.\" List of commands
+.Bl -tag -width flag
+.It Cm install Ar package...
+The install command is used to install packages. It downloads, configures,
+and builds, or downloads prebuilt (see the
+.Cm --use-binary-dist
+flag) and installs the packages you name. It will also install required
+dependencies automatically, but will ask you for confirmation before it
+does so.
+.Pp
+Aliases:
+.Cm update, enable, activate, use
+.It Cm remove Ar package...
+The remove command removes packages from the system.
+The current implementation has a flaw: it
+doesn't check dependencies itself but rather completly leaves that to the
+dpkg or apt-get tool (usually this poses no problem, though).
+.Pp
+The remove command removes the actual package files (excluding configuration
+files), but leaves the .deb compressed package file intact. This means that you
+can re-install the package later without going through the compile process again.
+If you need the disk space, you can remove the .deb from the
+.Pa @PREFIX@/fink/dists
+tree.
+.Pp
+These flags can be used with the
+.Cm fink remove
+command
+.Bl -tag -width flag -offset indent -compact
+.It Cm -h,--help
+Show the options which are available.
+.It Cm -r,--recursive
+Also remove packages that depend on the package(s) to be removed.
+.El
+.Pp
+Aliases:
+.Cm disable, deactivate, unuse, delete
+.Pp
+.It Cm purge Ar package...
+The purge command purges packages from the system.
+This is the same as
+.Cm fink remove
+except that it removes configuration files as well.
+.Pp
+These flags can be used with the
+.Cm fink purge
+command
+.Bl -tag -width flag -offset indent -compact
+.It Cm -h,--help
+Show the options which are available.
+.It Cm -r,--recursive
+Also purge packages that depend on the package(s) to be purged.
+.El
+.Pp
+.It Cm update-all
+This command updates all installed packages to the latest version. It does
+not need a package list, so you just type:
+.Dl Cm fink update-all
+.It Cm list Oo Ar list-options Oc Op Ar package...
+This command produces a list of available packages. If no packages are
+specified, it will list all available packages. If one or more package
+names are given,
+.Nm
+will list only those packages that match the
+given names. If the passed package named contain shell globs (?  and *
+wildcards), only those packages matching the glob are returned. If
+simple text strings (not globs) are passed, packages containing them
+as substrings of the name are returned.
+.Pp
+The default output is a table, listing installation state, the latest
+version and a short package description. The first column displays the
+installation state with the following meanings:
+.Pp
+.Bl -tag -width flag -offset indent -compact
+.It \
+not installed
+.It \ i
+latest version is installed
+.It (i)
+some version is installed, but a newer version is available
+.It *i*
+the version which is installed is more recent than the newest version currently available
+.It \ p
+a virtual package provided by a package that is installed
+.El
+.Pp
+The version column always lists the latest (highest) version known for
+the package, regardless of what version (if any) you have
+installed. To see all versions of a package available on your system
+along with more detailed status information about each, use
+.Cm fink dumpinfo -fallversions
+.Pp
+The following
+.Cm list-options
+affect the output format:
+.Bl -tag -width flag -offset indent -compact
+.It Cm -h,--help
+Show the options which are available.
+.It Cm -w xyz,--width=xyz
+Sets the width of the display you would like the output
+formatted for. xyz is either a numeric value or auto.
+auto will set the width based on the terminal width.
+The default is auto.
+.It Cm -t,--tab
+The default table format has fixed-width columns that are adjusted to
+fill the available screen size, with package names and descriptions
+truncated as necessary to fit. In
+.Cm -t
+mode, the output is tab delimited and fields are not truncated
+regardles of screen size. The tabbed mode is useful for running the
+output through additional scripts or parsers, and is the default
+format when
+.Cm fink list
+is used as part of a pipeline rather than as a simple command.
+.It Cm --format=table
+Output results in the standard fixed-width or tab-delimited table
+style. See the
+.Cm -t
+flag for a way to affect the format, and the intro to this command for
+general information about the layout.
+.It Cm --format=dotty
+Output package dependency data in .dot format, suitable for processing
+by
+.Cm dotty
+and other
+.Cm graphviz
+tools (compare to the human-readable list format of the
+.Cm fink show-deps
+command). This output mode just gives runtime dependencies of each
+package You can parse the output to get reverse-depends
+information, for example:
+.Dl fink list --format=dotty | grep ' \*[q]libgettext8-shlibs\*[q]'
+will list all packages that have a runtime dependency on the
+libgettext8-shlibs package. Technically, this example lists all
+packages' runtime dependency data, and then selects the lines that
+have libgettext8-shlibs in the dependency-target field. Note, there is
+a single space between the two different quotes before the
+package-name but not after.
+.It Cm --format=dotty-build
+Output package dependency data in .dot format, suitable for processing
+by
+.Cm dotty
+and other
+.Cm graphviz
+tools (compare to the human-readable list format of the
+.Cm fink show-deps
+command). This output mode gives compiletime dependencies of each
+package, which includes runtime and build dependencies of every
+package in a family (packages built together). Using the
+.Cm -m
+flag will also include dependencies for the package-family's
+self-testing (i.e., including TestDepends data). You can parse the
+output to get reverse-builddepends information, for example:
+.Dl fink -m list --format=dotty-build | grep ' \*[q]libgettext8-dev\*[q]'
+will list all packages that have a compiletime dependency on the
+libgettext8-dev package. Technically, this example lists all
+packages' compiletime dependency data, and then selects the lines that
+have libgettext8-dev in the dependency-target field. Note, there is
+a single space between the two different quotes before the
+package-name but not after.
+.El
+.Pp
+The following
+.Cm list-options
+control which packages are listed:
+.Bl -tag -width flag -offset indent -compact
+.It Cm -i,--installed
+Show only those packages which are currently installed.
+.It Cm -o,--outdated
+Show only those packages which are out of date.
+.It Cm -u,--uptodate
+Show only packages which are up to date.
+.It Cm -n,--notinstalled
+Show packages which are not currently installed.
+.It Cm -N,--newer
+Show packages whose installed version is newer than anything
+.Nm
+knows about.
+.It Cm -s expr,--section=expr
+Show only packages in the sections matching expr.
+.It Cm -m expr,--maintainer=expr
+Show only packages with the maintainer matching expr.
+.El
+.Pp
+Some usage examples:
+.Bl -tag -width flag -offset indent
+.It Cm fink list
+list all packages.
+.It Cm fink list bash
+check if bash is available and what version.
+.It Cm fink list --tab --outdated | cut -f2
+just list the names of the out of date packages.
+.It Cm fink list --section=kde
+list the packages in the kde section.
+.It Cm fink list --maintainer=fink-devel
+list the packages with no maintainer.
+.It Cm fink --trees=unstable list --maintainer=fink-devel
+list the packages with no maintainer, but only in the unstable tree.
+.It Cm fink list Qq "gnome*"
+list all packages that start with 'gnome'.
+.El
+.Pp
+The quotes in the last example are necessary to stop the shell from
+interpreting the pattern itself.
+.Pp
+.It Cm apropos Ar package...
+This command behaves similarly to
+.Cm fink list
+except that
+.Ar package...
+must be supplied and it searches package descriptions as well as package
+names for the given strings (no wildcards).
+.It Cm describe Ar package...
+This command displays a description of the package you name on the command
+line. Note that only a small part of the packages currently have a
+description.
+.Pp
+Aliases:
+.Cm desc, description, info
+.Pp
+.It Cm plugins
+List the (optional) plugins available to the
+.Nm
+package manager.  Currently lists
+the notification mechanisms and the source-tarball checksum algorithms.
+.Pp
+.It Cm fetch Ar package...
+Downloads the named packages, but does not install them. This command will
+download the tarballs even if they were downloaded before.
+.Pp
+These flags can be used with the
+.Cm fink fetch
+command
+.Bl -tag -width flag -offset indent -compact
+.It Cm -h,--help
+Show the options which are available.
+.It Cm -i,--ignore-restrictive
+Do not fetch packages that are "License: Restrictive". Useful for mirrors, because
+some restrictive packages do not allow source mirroring.
+.It Cm -d,--dry-run
+Just display information about the file(s) that would be downloaded
+for the package(s) to be fetched; do not actually download anything.
+.It Cm -r,--recursive
+Also fetch packages that are dependencies of the package(s) to be fetched.
+.El
+.Pp
+.It Cm fetch-all
+Downloads
+.Em all
+package source files. Like fetch, this downloads the
+tarballs even when they were downloaded before.
+.Pp
+These flags can be used with the
+.Cm fink fetch-all
+command
+.Bl -tag -width flag -offset indent -compact
+.It Cm -h,--help
+Show the options which are available.
+.It Cm -i,--ignore-restrictive
+Do not fetch packages that are "License: Restrictive". Useful for mirrors, because
+some restrictive packages do not allow source mirroring.
+.It Cm -d,--dry-run
+Just display information about the file(s) that would be downloaded
+for the package(s) to be fetched; do not actually download anything.
+.El
+.Pp
+.It Cm fetch-missing
+Downloads
+.Em all
+package source files. This command will only download files
+that are not present on the system.
+.Pp
+These flags can be used with the
+.Cm fink fetch-missing
+command
+.Bl -tag -width flag -offset indent -compact
+.It Cm -h,--help
+Show the options which are available.
+.It Cm -i,--ignore-restrictive
+Do not fetch packages that are "License: Restrictive". Useful for mirrors, because
+some restrictive packages do not allow source mirroring.
+.It Cm -d,--dry-run
+Just display information about the file(s) that would be downloaded
+for the package(s) to be fetched; do not actually download anything.
+.El
+.Pp
+.It Cm build Ar package...
+Builds a package, but does not install it. As usual, the source tarballs are
+downloaded if they can not be found. The result of this command is an
+installable .deb package file, which you can quickly install later with the
+install command. This command will do nothing if the .deb already exists.
+Note that dependencies are still
+.Em installed,
+not just built.
+.It Cm rebuild Ar package...
+Builds a package (like the
+.Cm build
+command), but ignores and overwrites the existing .deb file. If the
+package is installed, the newly created .deb file will also be installed
+in the system via
+.Xr dpkg 8 .
+Very useful during package development.
+.It Cm reinstall Ar package...
+Same as install, but will install the package via
+.Xr dpkg 8
+even when it is already installed. You can use this when you accidentally
+deleted package files or changed configuration files and want to get the
+default settings back.
+.It Cm configure
+Reruns the
+.Nm
+configuration process. This will let you change your mirror sites and
+proxy settings, among others.
+.It Cm selfupdate Ar [options]
+This command automates the process of upgrading to a new
+.Nm
+release. It checks the
+.Nm
+website to see if a new version is available. It then downloads the package
+descriptions and updates the core packages, including
+.Nm
+itself. This command can upgrade to major point releases (for example,
+the set of packages that comes with a Fink binary installer), but it can also
+set up your
+.Pa @PREFIX@/fink/dists
+directory tree for
+.Xr cvs 1
+or
+.Xr rsync 1
+updates.
+This means that you then will be able to access the very latest
+revisions of all packages instead of only the point-release snapshot. If no
+.Ar options
+are given, the existing default update method is used as given in the
+.Xr fink.conf 5
+file. Several
+.Ar options
+can be used to control the update process:
+.Bl -tag -width flag -offset indent -compact
+.It Cm -h,--help
+Show the options which are available.
+.It Cm -m MODE,--method=METHOD
+Establish the given METHOD as the default selfupdate method and update
+using it.
+.It Cm -f, --finish
+Do some standard actions after the actual MODE-specific updating of
+the package descriptions (update the binary-repository data, refresh
+some internal indices, make sure
+.Ar fink
+itself and some other critical packages are up-to-date).
+.El
+.It Cm selfupdate-rsync
+Synonym for
+.Cm selfupdate --method=rsync
+.It Cm selfupdate-cvs
+Synonym for
+.Cm selfupdate --method=cvs
+.It Cm index
+Rebuilds the package cache. You should not normally need to execute this manually,
+.Nm
+should auto-detect when it needs to be updated.
+.It Cm validate Ar [options] file...
+This command performs various checks on .info and .deb files. Package maintainers
+should run this on their package descriptions and corresponding built
+packages before submitting them.
+.Pp
+Aliases:
+.Cm check
+.Pp
+The following optional
+.Ar options
+may be used:
+.Bl -tag -width flag -offset indent -compact
+.It Cm -h,--help
+Show the options which are available.
+.It Cm -p,--prefix
+Simulate an alternate Fink basepath prefix (%p) within the files being validated.
+.It Cm --pedantic, --no-pedantic
+Control the display of nitpicky formatting warnings.
+.Cm --pedantic
+is the default.
+.El
+.It Cm scanpackages Op Ar tree...
+Updates the
+.Xr apt-get 8
+database of debs in the specified trees.
+.It Cm cleanup Ar [mode(s) and options]
+Removes obsolete and temporary files. This can reclaim large amounts of
+disk space. One or more modes may be specified:
+.Bl -tag -width flag -offset indent -compact
+.It Cm --debs
+Delete .deb files (compiled binary package archives) corresponding to
+versions of packages that are neither described by a package
+description (.info) file in the currently-active trees nor presently
+installed.
+.It Cm --sources,--srcs
+Delete sources (tarballs, etc.) that are not used by any package
+description (.info) file in the currently-active trees.
+.It Cm --buildlocks, --bl
+Delete stale buildlock packages.
+.It Cm --dpkg-status
+Remove entries for packages that are not installed from the dpkg
+"status" database.
+.It Cm --obsolete-packages
+Attempt to uninstall all installed packges that are obsolete.
+.It Cm --all
+All of the above modes.
+.El
+If no mode is specified,
+.Ar --debs --sources
+is the default action. In addition, the following options may be used:
+.Bl -tag -width flag -offset indent -compact
+.It Cm -k,--keep-src
+Move old source files to
+.Pa @PREFIX@/src/old/
+instead of deleting them.
+.It Cm -d,--dry-run
+Print the names of the files that would be deleted, but do not
+actually delete them.
+.It Cm -h,--help
+Show the modes and options which are available.
+.El
+.It Cm dumpinfo Ar [options] package...
+Shows how
+.Nm
+parses parts of a package's .info file. Various fields and
+percent expansions will be displayed according to
+.Ar options
+as follows:
+.Bl -tag -width flag -offset indent -compact
+.It Cm -h,--help
+Show the options which are available.
+.It Cm -a,--all
+Display all fields from the package description.
+This is the default mode when no
+.Ar --field
+or
+.Ar --percent
+flags are given.
+.It Cm -f fieldname, --field=fieldname
+Display the given fieldname(s), in the order listed.
+.It Cm -p key, --percent=key
+Display the given percent expansion key(s), in the order listed.
+.It Cm -e env_var, --env=env_var
+Display the given variable(s) from the environment in effect when the
+package is compiled. Output is in a form suitable to be fed to 'eval'.
+.El
+.It Cm show-deps Ar package...
+Displays a human-readable list of the compile-time (build) and
+run-time (installation) dependencies of the listed package(s). See the
+.Cm fink list --format=dotty
+and
+.Cm fink list --format=dotty-build
+commands for other ways of obtaining dependency (and
+reverse-dependency) information.
+.El
+.\"
+.\"
+.\" FILES
+.\"
+.\"
+.Sh FILES
+.Pa @PREFIX@/var/lib/fink
+.Bd -filled -offset indent -compact
+Package cache databases. Don't try to edit them manually--instead update using
+.Cm fink index.
+.Ed
+.Pp
+.Pa @PREFIX@/etc/fink.conf
+.Bd -filled -offset indent -compact
+The system wide configuration file. See
+.Xr fink.conf 5
+for more information.
+.Ed
+.\"
+.\"
+.\" HOMEPAGE
+.\"
+.\"
+.Sh HOMEPAGE
+http://www.finkproject.org/
+.\"
+.\"
+.\" BUGS
+.\"
+.\"
+.Sh BUGS
+Check out fink's bug tracker at
+http://sourceforge.net/tracker/?group_id=17203&atid=117203
+for a current list of known bugs.
+.\"
+.\"
+.\" AUTHOR
+.\"
+.\"
+.Sh AUTHOR
+This manpage is maintained by the Fink Core Group <fink-core@lists.sourceforge.net>.
+.\"
+.\"
+.\" ACKNOWLEDGEMENTS
+.\"
+.\"
+.Sh ACKNOWLEDGEMENTS
+.Nm
+is developed and maintained by The Fink Project (http://www.finkproject.org).
+.\"
+.\"
+.\" SEE ALSO
+.\"
+.\"
+.Sh "SEE ALSO"
+.Xr apt-get 8 ,
+.Xr dselect 8 ,
+.Xr dpkg 8 ,
+.Xr fink.conf 5

@@ -1,0 +1,181 @@
+#! /usr/bin/perl -w
+#
+# fink-virtual-pkgs
+# Copyright (c) 2001 Christoph Pfisterer
+# Copyright (c) 2001-2013 The Fink Package Manager Team
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110, USA.
+#
+
+require 5.008_001;  # perl 5.8.1 or newer required
+use strict;
+use Getopt::Long;
+use Fcntl;
+
+my $standalone = 0;
+my $basepath = '@BASEPATH@';
+
+our $VERSION = 1.28;
+
+UseFinkModules();
+Getopt::Long::Configure(qw(bundling ignore_case require_order));
+my ($dlist, $hash, $pkgname, @versions, $field, $provides);
+my %options = 
+   (
+		"apt" => 0,
+		"debug" => 0,
+		"dpkg" => 0,
+   );
+GetOptions(
+	'apt|a' => \$options{apt},
+	'debug' => \$options{debug},
+	'dpkg|d' => \$options{dpkg},
+	'help|h' => \&usage,
+	'version|v' => \&version,
+	) or die "Unknown option\n";
+if ($options{dpkg} and $options{apt}) { die "Can only specify one option dpkg or apt\n" }
+if ($options{apt}) {
+	sysopen(FH,'/tmp/finkaptstatus', O_WRONLY | O_EXCL | O_CREAT) || die "Can not open file /tmp/finkaptstatus for writing: $!\n";
+	select FH;
+    }
+if ($standalone == 0)
+{
+	$dlist = Fink::VirtPackage->list(%options);
+	foreach $pkgname (sort keys %$dlist) {
+		$hash = $dlist->{$pkgname};
+		if ($options{dpkg}) {
+			if (@versions = parse_fullversion($hash->{version}) and exists $hash->{status} and $hash->{status} =~ /^\S+\s+ok\s+installed$/i) {
+				# columns: package, epoch, version, revision
+				printf "%s\t%lu\t%s\t%s\n",$hash->{package},$versions[0],$versions[1],$versions[2];
+				# for provides we tell dpkg about them with the version as zero
+				if (exists $hash->{provides})
+				{
+					foreach $provides (split /,/,$hash->{provides})
+					{
+						$provides =~ s/\s+//gs;
+						print "$provides\t0\t0\t0\n";
+					}
+				}
+			}
+		} else {
+			printf "Package: %s\nStatus: %s\nVersion: %s\n", $hash->{package},$hash->{status},$hash->{version};
+			foreach $field (keys %$hash)
+			{
+				next if ($field =~ /^(package|status|version|descdetail|compilescript)$/);
+				printf "%s: %s\n",$field,$hash->{$field};
+			}
+			print "\n";
+		}
+	}
+}
+else
+{
+# We are running without fink modules, so just kernel and Mac OS X pkgs
+	my $macosx_version = 0;
+	if (-x "/usr/bin/sw_vers") {
+		open(SW_VERS, "/usr/bin/sw_vers |") or die "Couldn't determine system version: $!\n";
+		while (<SW_VERS>) {
+			chomp;
+			if (/(ProductVersion\:)\s*([^\s]*)/) {
+				$macosx_version = $2;
+				last;
+			}
+		}
+	}
+	if ($options{dpkg})
+	{
+		# columns: package, epoch, version, revision
+		# for provides we tell dpkg about them with the version as zero
+		printf "%s\t0\t%s\t1\n", lc((uname())[0]), lc((uname())[2]);
+		print "kernel\t0\t0\t0\n";
+		if ($macosx_version ne 0) {
+			printf "macosx\t0\t%s\t1\n",$macosx_version;
+		}
+	}
+	else
+	{
+		printf "Package: %s\nStatus: install ok installed\nVersion: %s-1\nProvides: kernel\n\n", lc((uname())[0]), lc((uname())[2]);
+		if ($macosx_version ne 0) {
+			printf "Package: macosx\nStatus: install ok installed\nVersion: %s-1\n\n",$macosx_version;
+		}
+	}
+}
+if ($options{apt}) {
+	select STDOUT;
+	close FH;
+}
+
+sub version {
+	print "$0 revision $VERSION\n";
+	if ($standalone) {
+		print "\t(running in standalone mode, no Fink/Fink::VirtPackage available)\n";
+	} else {
+		print "\tFink version ", Fink::FinkVersion->fink_version(), "\n";
+		print "\tFink::VirtPackage revision ", $Fink::VirtPackage::VERSION, "\n";
+	}
+
+	exit 0;
+}
+
+sub usage {
+	print <<END;
+usage: $0 [--debug] [-a|--apt] [-d|--dpkg] [-h|--help] [-v|--version]
+
+	--debug       Print debugging info to STDERR
+	-a/--apt      [called by apt, for internal use only]
+	-d/--dpkg     [called by dpkg, for internal use only]
+	-h/--help     This help
+	-v/--version  Print the version
+
+END
+	exit 0;
+}
+
+sub UseFinkModules {
+	# Be careful about using fink modules
+	eval { 
+        die unless -d "$basepath/lib/perl5";
+        require lib;
+        import lib "$basepath/lib/perl5";
+
+		require Fink::FinkVersion;
+		require Fink::VirtPackage;
+		require Fink::Services;
+		import Fink::Services qw(parse_fullversion read_config)
+	};
+
+	$standalone = 1 if $@;
+
+	# read the configuration file
+	if ($standalone != 1)
+	{
+		my $configpath = "$basepath/etc/fink.conf";
+                my $config;
+		if (-f $configpath) {
+			$config = read_config($configpath,
+                                              { Basepath => "$basepath" }
+                                             );
+		} else {
+			$standalone=1;
+		}
+	}
+
+	if ($standalone == 1)
+	{
+		require POSIX;
+		import POSIX qw(uname);
+	}
+
+}

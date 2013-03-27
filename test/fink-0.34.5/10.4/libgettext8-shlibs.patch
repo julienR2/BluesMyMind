@@ -1,0 +1,25 @@
+diff -uNr gettext-0.18.1.1/gettext-runtime/libasprintf/Makefile.in gettext-0.18.1.1-new/gettext-runtime/libasprintf/Makefile.in
+--- gettext-0.18.1.1/gettext-runtime/libasprintf/Makefile.in	2007-11-06 18:35:22.000000000 -0500
++++ gettext-0.18.1.1-new/gettext-runtime/libasprintf/Makefile.in	2007-12-06 16:31:05.000000000 -0500
+@@ -394,7 +394,7 @@
+ # How to build libasprintf.
+ # With libtool 1.5.14, on some platforms, like BeOS, "libtool --tag=CXX" fails
+ # to create a shared library, however "libtool --tag=CC" succeeds.
+-libasprintf_la_LDFLAGS = @LTNOUNDEF@
++libasprintf_la_LDFLAGS = @LTNOUNDEF@ -static
+ libgnu_la_SOURCES = dummy.c
+ libgnu_la_LIBADD = $(gl_LTLIBOBJS) @LTALLOCA@
+ libgnu_la_DEPENDENCIES = $(gl_LTLIBOBJS) @LTALLOCA@
+diff -uNr gettext-0.18.1.1/gettext-runtime/libasprintf/Makefile.in gettext-0.18.1.1-new/gettext-runtime/libasprintf/Makefile.in
+--- gettext-0.18.1.1/gettext-tools/configure 2010-06-06 13:12:20.000000000 -0700
++++ gettext-0.18.1.1-new/gettext-tools/configure 2010-08-13 23:24:09.000000000 -0700
+@@ -40606,7 +40606,9 @@
+ #include <stdlib.h>
+ #include <string.h> /* for strcpy */
+ /* The stpncpy prototype is missing in <string.h> on AIX 4.  */
++#ifndef stpncpy
+ extern char *stpncpy (char *dest, const char *src, size_t n);
++#endif
+ int main () {
+   const char *src = "Hello";
+   char dest[10];
