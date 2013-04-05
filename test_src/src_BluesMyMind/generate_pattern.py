@@ -1,11 +1,11 @@
 import mingus.core.notes as notes
 import mingus.core.intervals as intervals
 #from mingus.midi import fluidsynth
-#from mingus.midi import MidiFileOut
+#from mingus.midi import MidiFileOut #d残ommenter pour tester fluidsynth (le truc d'avant aussi)
 from mingus.containers.Bar import Bar
 from mingus.containers.Note import Note
 from mingus.containers.Track import Track
-#import mingus.extra.LilyPond as LilyPond
+#import mingus.extra.LilyPond as LilyPond #d残ommenter pour tester lilypond : > pdf
 
 
 
@@ -75,7 +75,7 @@ def generate_pattern(key = "C", pattern = ((1, 1, "none", '=', 3), (3, 1, "none"
     progression = ['I', 'I', 'I', 'I', 'IV', 'IV', 'I', 'I', 'V', 'IV', 'I', 'V']
     progression = progression_to_int(progression)
     t = Track()
-    #fluidsynth.init("198_u20_Electric_Grand.SF2")
+    #fluidsynth.init("198_u20_Electric_Grand.SF2") # permet d'initialiser l'instrument
 
     for p in progression :
         previews_note = None
@@ -99,7 +99,7 @@ def generate_pattern(key = "C", pattern = ((1, 1, "none", '=', 3), (3, 1, "none"
     #track = LilyPond.from_Track(t)
     #LilyPond.to_png(track, "left_hand")
     #MidiFileOut.write_Track("test_midi.mid", t)
-    
+    #d残ocher les trois lignes pr残仕entes pour tester si lilypond et fluidsynth marche (pdf et midi)
 
             
 generate_pattern()
