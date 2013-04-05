@@ -1,12 +1,11 @@
-from mingus.core.mt_exceptions import NoteFormatError, KeyError, RangeError
 import mingus.core.notes as notes
 import mingus.core.intervals as intervals
-from mingus.midi import fluidsynth
-from mingus.midi import MidiFileOut
+#from mingus.midi import fluidsynth
+#from mingus.midi import MidiFileOut
 from mingus.containers.Bar import Bar
 from mingus.containers.Note import Note
 from mingus.containers.Track import Track
-import mingus.extra.LilyPond as LilyPond
+#import mingus.extra.LilyPond as LilyPond
 
 
 
@@ -28,12 +27,13 @@ def progression_to_int(progression):
                 if nextvalue > value:
                     value *= -1
             except IndexError:
-                 # there is no next place.
-                 pass
+                # there is no next place.
+                pass
             places.append(value)
-        sum = 0
-        for n in places: sum += n
-        num_progression.append(sum)
+        sum_roman = 0
+        for n in places: 
+            sum_roman += n
+        num_progression.append(sum_roman)
         
     return num_progression
 
@@ -75,7 +75,7 @@ def generate_pattern(key = "C", pattern = ((1, 1, "none", '=', 3), (3, 1, "none"
     progression = ['I', 'I', 'I', 'I', 'IV', 'IV', 'I', 'I', 'V', 'IV', 'I', 'V']
     progression = progression_to_int(progression)
     t = Track()
-    fluidsynth.init("198_u20_Electric_Grand.SF2")
+    #fluidsynth.init("198_u20_Electric_Grand.SF2")
 
     for p in progression :
         previews_note = None
@@ -96,9 +96,9 @@ def generate_pattern(key = "C", pattern = ((1, 1, "none", '=', 3), (3, 1, "none"
             b + note
         t.add_bar(b)
                     
-    track = LilyPond.from_Track(t)
-    LilyPond.to_png(track, "left_hand")
-    MidiFileOut.write_Track("test_midi.mid", t)
+    #track = LilyPond.from_Track(t)
+    #LilyPond.to_png(track, "left_hand")
+    #MidiFileOut.write_Track("test_midi.mid", t)
     
 
             
