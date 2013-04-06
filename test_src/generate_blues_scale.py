@@ -2,7 +2,7 @@
 
 
 from mingus.core.mt_exceptions import NoteFormatError, KeyError, RangeError
-import mingus.core.notes
+import mingus.core.notes as notes
 
 def generate_blues_scale(key = "C"):
     """Returns an ordered list of the notes of the blues scale in this key. \

@@ -1,7 +1,4 @@
-#!/Applications/python2.7
-
-
-from mingus.core.mt_exceptions import NoteFormatError, KeyError, RangeError
+from mingus.core.mt_exceptions import NoteFormatError
 import mingus.core.notes as notes
 import mingus.core.intervals as intervals
 
@@ -45,3 +42,4 @@ This function will raise an !NoteFormatError if the key isn't recognised"""
     result = result[tonic:] + result[:tonic]
 
     return result
+
