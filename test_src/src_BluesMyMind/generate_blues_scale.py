@@ -30,6 +30,7 @@ This function will raise an !NoteFormatError if the key isn't recognised"""
     
     result.append(intervals.unison(key))
     result.append(notes.diminish(intervals.third(key,key)))
+    result.append(intervals.third(key, key))
     result.append(intervals.fourth(key,key))
     result.append(notes.diminish(intervals.fifth(key,key)))
     result.append(intervals.fifth(key,key))
@@ -42,4 +43,6 @@ This function will raise an !NoteFormatError if the key isn't recognised"""
     result = result[tonic:] + result[:tonic]
 
     return result
+
+print(str(generate_blues_scale()))
 
