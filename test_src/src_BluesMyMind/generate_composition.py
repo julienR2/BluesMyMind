@@ -1,8 +1,11 @@
 from mingus.containers import Composition
 from generate_pattern import generate_pattern
 from mingus.midi import MidiFileOut
+from mingus.midi import fluidsynth
+
 
 def generate_composition(pattern, progression_type, nb_bars, key="C", rythm=60):
+    fluidsynth.init("198_u20_Electric_Grand.SF2") # permet d'initialiser l'instrument
     newComposition = Composition()
     left_hand = generate_pattern(key, pattern, progression_type, nb_bars)
     newComposition.add_track(left_hand)

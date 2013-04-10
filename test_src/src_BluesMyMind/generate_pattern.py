@@ -1,43 +1,11 @@
 import mingus.core.notes as notes
 import mingus.core.intervals as intervals
-from mingus.midi import fluidsynth
-from mingus.midi import MidiFileOut #decommenter pour tester fluidsynth (le truc d'avant aussi)
 from mingus.containers.Bar import Bar
 from mingus.containers.Note import Note
 from mingus.containers.Track import Track
 import mingus.extra.LilyPond as LilyPond #decommenter pour tester lilypond : > pdf
 from choose_progression import choose_progression
-
-
-
-def progression_to_int(progression):
-    num_progression = []
-    
-    for prog in progression :
-        roman = prog.upper()
-        nums = ['X', 'V', 'I']
-        ints = [10,  5,   1]
-        places = []
-  
-        for i in range(len(roman)):
-            c = roman[i]
-            value = ints[nums.index(c)]
-            # If the next place holds a larger number, this value is negative.
-            try:
-                nextvalue = ints[nums.index(roman[i +1])]
-                if nextvalue > value:
-                    value *= -1
-            except IndexError:
-                # there is no next place.
-                pass
-            places.append(value)
-        sum_roman = 0
-        for n in places: 
-            sum_roman += n
-        num_progression.append(sum_roman)
-        
-    return num_progression
-
+from progression_utils import get_progression_key, progression_to_int
 
 def get_note_pattern(pattern, key):
     if pattern[0] == 1 :
@@ -61,15 +29,6 @@ def get_note_pattern(pattern, key):
         note = notes.augment(note)
     return note
 
-
-def get_progression_key(note_int, key):
-    if note_int == 1 :
-        p_key = intervals.unison(key)
-    if note_int == 4 :
-        p_key = intervals.fourth(key, key)
-    if note_int == 5 :
-        p_key = intervals.fifth(key, key)
-    return p_key
     
 
 def chord_length(pattern_note, pattern, position_note):
@@ -88,12 +47,12 @@ def generate_pattern(key = "C", pattern = ((1, 4, 1, "none", '=', 3), (3, 4, 2,"
     #pattern = ((1, 4, 1, "none", '=', 3), (5, 4, 1, "none", '+', 3), (1, 4, 2, "none", '+', 3), (6, 4, 2, "none", '+', 3), (1, 4, 3, "none", '=', 3), (5, 4, 3, "none", '+', 3), (1, 4, 4, "none", '+', 3), (6, 4, 4, "none", '+', 3))
     #pattern = ((1, 8, 1, "none", '=', 2), (5, 8, 1, "none", '+', 2), (1, 8, 1.5, "none", '=', 2), (5, 8, 1.5, "none", '+', 2), (2, 8, 2, "diese", '=', 2), (3, 8, 2.5, "none", '+', 2), (1, 8, 3, "none", '=', 2), (5, 8, 3, "none", '+', 2), (1, 8, 3.5, "none", '=', 2), (5, 8, 3.5, "none", '+', 2), (2, 8, 4, "diese", '=', 2), (3, 8, 4.5, "none", '+', 2))
     #pattern = ((1, 8, 1, "none", '=', 3), (5, 8, 1, "none", '+', 3), (1, 8, 1.5, "none", '=', 3), (5, 8, 1.5, "none", '+', 3), (2, 8, 2, "diese", '-', 3), (3, 8, 2.5, "none", '+', 3), (1, 8, 3, "none", '=', 3), (5, 8, 3, "none", '+', 3), (1, 8, 3.5, "none", '=', 3), (5, 8, 3.5, "none", '+', 3), (1, 8, 4, "none", '=', 3), (6, 8, 4, "none", '+', 3), (1, 8, 4.5, "none", '=', 3), (6, 8, 4.5, "none", '+', 3))
-
+    list_progression = ()
     t = Track()
-    fluidsynth.init("198_u20_Electric_Grand.SF2") # permet d'initialiser l'instrument
     for n in range(0, nb_bars):
         nb_bars_left = nb_bars-n
         progression = choose_progression(progression_type, nb_bars_left)
+        list_progression.append(progression)
         progression = progression_to_int(progression)
 
         for p in progression : # permet d'avancer dans la progression des mesures
