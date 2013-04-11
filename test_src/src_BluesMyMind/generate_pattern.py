@@ -4,7 +4,6 @@ from mingus.containers.Bar import Bar
 from mingus.containers.Note import Note
 from mingus.containers.Track import Track
 import mingus.extra.LilyPond as LilyPond #decommenter pour tester lilypond : > pdf
-from choose_progression import choose_progression
 from progression_utils import get_progression_key, progression_to_int
 
 def get_note_pattern(pattern, key):
@@ -43,18 +42,13 @@ def chord_length(pattern_note, pattern, position_note):
             break      
     return (begin, end, chord)
 
-def generate_pattern(key = "C", pattern = ((1, 4, 1, "none", '=', 3), (3, 4, 2,"none", '+', 3), (5, 4, 3, "none", '+', 3), (6, 4, 4, "none", '+', 3)), progression_type = 12, nb_bars=1):
+def generate_pattern(progression_list, key = "C", pattern = ((1, 4, 1, "none", '=', 3), (3, 4, 2,"none", '+', 3), (5, 4, 3, "none", '+', 3), (6, 4, 4, "none", '+', 3)), nb_bars=1):
     #pattern = ((1, 4, 1, "none", '=', 3), (5, 4, 1, "none", '+', 3), (1, 4, 2, "none", '+', 3), (6, 4, 2, "none", '+', 3), (1, 4, 3, "none", '=', 3), (5, 4, 3, "none", '+', 3), (1, 4, 4, "none", '+', 3), (6, 4, 4, "none", '+', 3))
     #pattern = ((1, 8, 1, "none", '=', 2), (5, 8, 1, "none", '+', 2), (1, 8, 1.5, "none", '=', 2), (5, 8, 1.5, "none", '+', 2), (2, 8, 2, "diese", '=', 2), (3, 8, 2.5, "none", '+', 2), (1, 8, 3, "none", '=', 2), (5, 8, 3, "none", '+', 2), (1, 8, 3.5, "none", '=', 2), (5, 8, 3.5, "none", '+', 2), (2, 8, 4, "diese", '=', 2), (3, 8, 4.5, "none", '+', 2))
     #pattern = ((1, 8, 1, "none", '=', 3), (5, 8, 1, "none", '+', 3), (1, 8, 1.5, "none", '=', 3), (5, 8, 1.5, "none", '+', 3), (2, 8, 2, "diese", '-', 3), (3, 8, 2.5, "none", '+', 3), (1, 8, 3, "none", '=', 3), (5, 8, 3, "none", '+', 3), (1, 8, 3.5, "none", '=', 3), (5, 8, 3.5, "none", '+', 3), (1, 8, 4, "none", '=', 3), (6, 8, 4, "none", '+', 3), (1, 8, 4.5, "none", '=', 3), (6, 8, 4.5, "none", '+', 3))
-    list_progression = ()
     t = Track()
-    for n in range(0, nb_bars):
-        nb_bars_left = nb_bars-n
-        progression = choose_progression(progression_type, nb_bars_left)
-        list_progression.append(progression)
+    for progression in progression_list:
         progression = progression_to_int(progression)
-
         for p in progression : # permet d'avancer dans la progression des mesures
             previews_note = None
             p_key = get_progression_key(p, key)
