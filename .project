@@ -16,12 +16,21 @@
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1365716406190</id>
+			<id>1365716956809</id>
 			<name></name>
 			<type>22</type>
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
 				<arguments>1.0-name-matches-false-false-*.pyc</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1365716956810</id>
+			<name></name>
+			<type>22</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-*.pyo</arguments>
 			</matcher>
 		</filter>
 	</filteredResources>
