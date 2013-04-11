@@ -214,3 +214,6 @@ def make_pattern(x):
         return pattern.pattern_tuple(tuple(make_pattern(element)
                                              for element in x))
     return pattern.pattern_literal(x)
+
+
+fc_test()

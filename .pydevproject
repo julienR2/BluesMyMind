@@ -6,12 +6,7 @@
 <path>/BluesMyMind</path>
 </pydev_pathproperty>
 <pydev_property name="org.python.pydev.PYTHON_PROJECT_VERSION">python 2.7</pydev_property>
-<pydev_property name="org.python.pydev.PYTHON_PROJECT_INTERPRETER">tx_python</pydev_property>
-<pydev_pathproperty name="org.python.pydev.PROJECT_EXTERNAL_SOURCE_PATH">
-<path>/Users/louisegrandjonc/git/BluesMyMind/lib/fink-0.34.5</path>
-<path>/Users/louisegrandjonc/git/BluesMyMind/lib/fluidsynth-1.1.6</path>
-<path>/Users/louisegrandjonc/git/BluesMyMind/lib/mingus-0.4.2.3</path>
-<path>/Users/louisegrandjonc/git/BluesMyMind/lib/pyFluidSynth-1.2.4</path>
-<path>/Users/louisegrandjonc/git/BluesMyMind/lib/sfArkLib-master</path>
-</pydev_pathproperty>
+<pydev_property name="org.python.pydev.PYTHON_PROJECT_INTERPRETER">Default</pydev_property>
+
+
 </pydev_project>
