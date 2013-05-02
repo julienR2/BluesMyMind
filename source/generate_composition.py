@@ -8,7 +8,6 @@ from choose_progression import on_progression_type_change
 def generate_composition(pattern, progression_type, nb_bars, key="C", rythm=60):
     fluidsynth.init("198_u20_Electric_Grand.SF2") # permet d'initialiser l'instrument
     newComposition = Composition()
-
     progression_list = on_progression_type_change(progression_type, nb_bars)
     left_hand = generate_pattern(progression_list, key, pattern, nb_bars)
     newComposition.add_track(left_hand)
