@@ -1,12 +1,7 @@
-import mingus.core.notes as notes
-import mingus.core.intervals as intervals
 from mingus.containers.Bar import Bar
 from mingus.containers.Note import Note
-from mingus.containers.Track import Track
-from mingus.midi import MidiFileOut, fluidsynth
+from mingus.midi import fluidsynth
 from pattern_utils import chord_length, get_note_pattern
-from patterns import PATTERNS
-
 
 def play_pattern(pattern, key):
     fluidsynth.init("198_u20_Electric_Grand.SF2") # permet d'initialiser l'instrument
