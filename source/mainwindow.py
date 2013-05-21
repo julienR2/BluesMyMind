@@ -8,7 +8,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-import patterns, play_pattern
+import patterns, play_pattern, generate_composition
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -64,7 +64,7 @@ class Ui_MainWindow(object):
         self.patternBox = QtGui.QComboBox(self.gridLayoutWidget)
         self.patternBox.setObjectName(_fromUtf8("patternBox"))
         for i in range(len(patterns.PATTERNS)):
-            self.patternBox.addItem("pattern "+str(i))
+            self.patternBox.addItem("Pattern "+str(i))
         self.gridLayout.addWidget(self.patternBox, 0, 2, 1, 1)
         self.tempoBox = QtGui.QComboBox(self.gridLayoutWidget)
         self.tempoBox.setObjectName(_fromUtf8("tempoBox"))
@@ -127,12 +127,12 @@ class Ui_MainWindow(object):
         play_pattern.play_pattern(patterns.PATTERNS[self.patternBox.currentIndex()], str(self.gammeBox.currentText()))
         
     def handleValidateButton(self):
-        print "Generate Composition with :"
-        print "pattern : " + self.patternBox.currentText()
-        print "gamme : " + self.gammeBox.currentText()
-        print "Structure : " + self.structureBox.currentText()
-        print "Longueur : " + self.longueurText.text()
-        print "Tempo : " + self.tempoBox.currentText()
-        print "Mode : " + self.modeBox.currentText()
+        pattern = self.patternBox.currentText()
+        gamme= self.gammeBox.currentText()
+        structure = self.structureBox.currentText()
+        longueur = self.longueurText.text()
+        tempo = self.tempoBox.currentText()
+        mode = self.modeBox.currentIndex()
+        generate_composition.generate_composition(pattern, structure, longueur, mode, gamme, tempo)
         
         
