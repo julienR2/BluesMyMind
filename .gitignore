@@ -6,3 +6,7 @@
 lib/dépendances.rtf
 
 .pydevproject
+
+*.pyc
+
+.settings/org.eclipse.core.resources.prefs
