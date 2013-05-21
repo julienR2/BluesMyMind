@@ -1,5 +1,5 @@
-PHRASE_MIDDLE = (
-                 ((1, 4), 2, "none", 
+PHRASE_MIDDLE = [
+                 [(1, 4), 2, "none", 
                   (
                    (
                     (1, 8, 1, "none", '=', 3), 
@@ -21,8 +21,8 @@ PHRASE_MIDDLE = (
                      (5, 4, 4, "bemol", '-', 3)
                      )
                    )
-                  ), 
-                 ((1, 4, 5), 2, "none", 
+                  ], 
+                 [(1, 4, 5), 2, "none", 
                   (
                    (
                     (1, 8, 1, "none", '=', 4), 
@@ -44,8 +44,8 @@ PHRASE_MIDDLE = (
                     (0, 4, 4, "none", '=', 3)
                     )
                    )
-                  ),
-                 ((1, 4, 5), 2, "none", 
+                  ],
+                 [(1, 4, 5), 2, "none", 
                   (
                    (
                     (1, 8, 1, "none", '=', 4), 
@@ -67,8 +67,8 @@ PHRASE_MIDDLE = (
                     (0, 4, 4, "none", '=', 3)
                     )
                    )
-                  ),
-                 ((1, 4, 5), 2, "mixolydien", #je suis pas sure pour le mode, a voir...
+                  ],
+                 [(1, 4, 5), 2, "mixolydien", #je suis pas sure pour le mode, a voir...
                     (
                      (
                         (1, 8, 1, "none", '=', 4), 
@@ -88,9 +88,9 @@ PHRASE_MIDDLE = (
                         (7, 2, 3, "bemol", '+', 4) 
                      )
                     )
-                  ),
+                  ],
                  
-                 ((1, 4, 5), 2, "mixolydien",
+                 [(1, 4, 5), 2, "mixolydien",
                   (
                    (5, 4, 1, "none", "=", 4),
                    (6, 8, 2, "none", "+", 4),
@@ -104,8 +104,8 @@ PHRASE_MIDDLE = (
                    (7, 8, 2.5, "bemol", "-", 4),
                    (7, 2, 3, "bemol", "-", 4)
                    )     
-                   )
-                  )
+                   ]
+                  ]
 
 TURNAROUND = ""
 

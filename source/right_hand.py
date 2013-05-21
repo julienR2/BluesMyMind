@@ -14,8 +14,9 @@ def choose_phrases(key, mode, composition_length):
         phrase_1_index = random.randint(0, len(list_of_possible_1)-1)
 
         phrase_1 = list_of_possible_1[phrase_1_index]
-    
-        phrase_list.append(phrase_1)
+        phrase_1_chosen = [1, phrase_1]
+        #phrase_1[0]= 1
+        phrase_list.append(phrase_1_chosen)
         
         list_of_possible_4 = choose_chord_4_phrase(mode)
         
@@ -35,13 +36,29 @@ def choose_phrases(key, mode, composition_length):
         index_phrase_4 = random.randint(0, len(list_best_phrase_4)-1)
         
         phrase_4 = list_of_possible_4[index_phrase_4]
-        phrase_list.append(phrase_4)
+        phrase_4_chosen = [4, phrase_4]
+        #phrase_4[0] = 4
+        phrase_list.append(phrase_4_chosen)
 
         list_of_possible_5 = choose_chord_5_phrase(mode)
         velocity_phrase_4 = velocity_phrase(phrase_4)
         for phrase_5 in list_of_possible_4 :
             if abs(velocity_phrase(phrase_5)-velocity_phrase_4)>1 :
                 list_of_possible_5.remove(phrase_5)
+                
+                
+        compatibility = []
+        for phrase_5 in list_of_possible_5 :
+            compatibility.append(calcul_compatibility(phrase_4, phrase_5, key))
+        
+        list_best_phrase_5 = get_best_options(compatibility)
+        index_phrase_5 = random.randint(0, len(list_best_phrase_5)-1)
+        
+        phrase_5 = list_of_possible_5[index_phrase_5]
+        phrase_5_chosen = [5, phrase_5]
+        #phrase_5[0] = 5
+        phrase_list.append(phrase_5_chosen)
+        
         
     
     elif composition_length == 2 :
@@ -134,6 +151,7 @@ def common_note(phrase1, phrase2, key):
 
 
 def velocity_phrase(phrase):
+    print(str(phrase))
     number_notes = 0
     for bars in phrase[3] :
         for note in bars :

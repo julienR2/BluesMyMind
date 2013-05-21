@@ -10,3 +10,7 @@ lib/dépendances.rtf
 *.pyc
 
 .settings/org.eclipse.core.resources.prefs
+
+lib/
+
+virtualenv/
