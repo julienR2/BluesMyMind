@@ -54,4 +54,3 @@ def play_pattern(pattern, key):
         position_note+=1
             
     fluidsynth.play_Bar(b, 1, 60)                      
-
