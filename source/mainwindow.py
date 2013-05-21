@@ -127,12 +127,19 @@ class Ui_MainWindow(object):
         play_pattern.play_pattern(patterns.PATTERNS[self.patternBox.currentIndex()], str(self.gammeBox.currentText()))
         
     def handleValidateButton(self):
-        pattern = self.patternBox.currentText()
+        pattern = patterns.PATTERNS[self.patternBox.currentIndex()]
+        print "pattern : " + str(pattern) + " - " + str(type(pattern))
         gamme= self.gammeBox.currentText()
+        print "gamme : " + gamme + " - " + str(type(gamme))
         structure = self.structureBox.currentText()
+        print "structure : " + structure + " - " + str(type(structure))
         longueur = self.longueurText.text()
+        print "longueur : " + longueur + " - " + str(type(longueur))
         tempo = self.tempoBox.currentText()
-        mode = self.modeBox.currentIndex()
-        generate_composition.generate_composition(pattern, structure, longueur, mode, gamme, tempo)
+        print "tempo : " + tempo + " - " + str(type(tempo))
+        if self.modeBox.currentIndex() == 0:
+            mode = "none"
+        print "mode : " + mode + " - " + str(type(mode))
+        generate_composition.generate_composition(pattern, int(structure), int(longueur), mode, str(gamme), int(tempo))
         
         
