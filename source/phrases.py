@@ -1,5 +1,5 @@
 PHRASE_MIDDLE = (
-                 (2, "none", 
+                 ((1, 4), 2, "none", 
                   (
                    (
                     (1, 8, 1, "none", '=', 3), 
@@ -22,7 +22,7 @@ PHRASE_MIDDLE = (
                      )
                    )
                   ), 
-                 (2, "none", 
+                 ((1, 4, 5), 2, "none", 
                   (
                    (
                     (1, 8, 1, "none", '=', 4), 
@@ -45,7 +45,7 @@ PHRASE_MIDDLE = (
                     )
                    )
                   ),
-                 (2, "none", 
+                 ((1, 4, 5), 2, "none", 
                   (
                    (
                     (1, 8, 1, "none", '=', 4), 
@@ -68,7 +68,7 @@ PHRASE_MIDDLE = (
                     )
                    )
                   ),
-                 (2, "mixolydien", #je suis pas sure pour le mode, à voir...
+                 ((1, 4, 5), 2, "mixolydien", #je suis pas sure pour le mode, a voir...
                     (
                      (
                         (1, 8, 1, "none", '=', 4), 
@@ -90,7 +90,7 @@ PHRASE_MIDDLE = (
                     )
                   ),
                  
-                 (2, "jesaispaaaas"
+                 ((1, 4, 5), 2, "mixolydien",
                   (
                    (5, 4, 1, "none", "=", 4),
                    (6, 8, 2, "none", "+", 4),

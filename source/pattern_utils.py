@@ -1,8 +1,6 @@
 import mingus.core.notes as notes
 import mingus.core.intervals as intervals
-from mingus.containers.Bar import Bar
-from mingus.containers.Note import Note
-from mingus.containers.Track import Track
+
 
 def get_note_pattern(pattern, key):
     if pattern[0] == 1 :
@@ -20,9 +18,9 @@ def get_note_pattern(pattern, key):
     elif pattern[0] == 7 :
         note = intervals.seventh(key, key)
 
-    if pattern[2] == "bemol":
+    if pattern[3] == "bemol":
         note = notes.diminish(note)
-    elif pattern[2] == "diese" :
+    elif pattern[3] == "diese" :
         note = notes.augment(note)
     return note
 
