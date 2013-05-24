@@ -30,10 +30,11 @@ def chord_length(pattern_note, pattern, position_note):
     begin = position_note
     end = position_note
     chord = False
-    for p_note in pattern[position_note+1:] :
-        if p_note[2] == pattern_note[2] :
-            chord = True
-            end+=1
-        else :
-            break      
+    if len(pattern) > 1 :
+        for p_note in pattern[position_note+1:] :
+            if p_note[2] == pattern_note[2] :
+                chord = True
+                end+=1
+            else :
+                break      
     return (begin, end, chord)

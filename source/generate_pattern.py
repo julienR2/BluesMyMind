@@ -66,7 +66,6 @@ def generate_pattern(progression_list, key = "C", pattern = ((1, 4, 1, "none", '
                 position_note+=1
                 
             t.add_bar(b)
-    print(str(t))
                     
     #track = LilyPond.from_Track(t)
     #test = LilyPond.to_png(track, "left_hand")

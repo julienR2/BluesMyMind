@@ -139,6 +139,8 @@ class Ui_MainWindow(object):
         print "tempo : " + tempo + " - " + str(type(tempo))
         if self.modeBox.currentIndex() == 0:
             mode = "none"
+        else:
+            mode = "mixolydien"
         print "mode : " + mode + " - " + str(type(mode))
         generate_composition.generate_composition(pattern, int(structure), int(longueur), mode, str(gamme), int(tempo))
         
