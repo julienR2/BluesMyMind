@@ -2,8 +2,10 @@ from mingus.containers.Bar import Bar
 from mingus.containers.Note import Note
 from mingus.midi import fluidsynth
 from pattern_utils import chord_length, get_note_pattern
+from source import patterns
 
-def play_pattern(pattern, key):
+def play_pattern(pattern_index, key):
+    pattern = patterns.PATTERNS[pattern_index]
     fluidsynth.init("198_u20_Electric_Grand.SF2") # permet d'initialiser l'instrument
 
     previews_note = None

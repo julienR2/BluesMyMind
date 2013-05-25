@@ -1,18 +1,17 @@
-import mingus.core.notes as notes
-import mingus.core.intervals as intervals
 from mingus.containers.Bar import Bar
 from mingus.containers.Note import Note
 from mingus.containers.Track import Track
-import mingus.extra.LilyPond as LilyPond #decommenter pour tester lilypond : > pdf
-from progression_utils import get_progression_key, progression_to_int
 from pattern_utils import chord_length, get_note_pattern
+from progression_utils import get_progression_key, progression_to_int
+from source import patterns
+import mingus.core.intervals as intervals
+import mingus.core.notes as notes
+import mingus.extra.LilyPond as LilyPond #decommenter pour tester lilypond : > pdf
 
 
 
-def generate_pattern(progression_list, key = "C", pattern = ((1, 4, 1, "none", '=', 3), (3, 4, 2,"none", '+', 3), (5, 4, 3, "none", '+', 3), (6, 4, 4, "none", '+', 3)), nb_bars=1):
-    #pattern = ((1, 4, 1, "none", '=', 3), (5, 4, 1, "none", '+', 3), (1, 4, 2, "none", '+', 3), (6, 4, 2, "none", '+', 3), (1, 4, 3, "none", '=', 3), (5, 4, 3, "none", '+', 3), (1, 4, 4, "none", '+', 3), (6, 4, 4, "none", '+', 3))
-    #pattern = ((1, 8, 1, "none", '=', 2), (5, 8, 1, "none", '+', 2), (1, 8, 1.5, "none", '=', 2), (5, 8, 1.5, "none", '+', 2), (2, 8, 2, "diese", '=', 2), (3, 8, 2.5, "none", '+', 2), (1, 8, 3, "none", '=', 2), (5, 8, 3, "none", '+', 2), (1, 8, 3.5, "none", '=', 2), (5, 8, 3.5, "none", '+', 2), (2, 8, 4, "diese", '=', 2), (3, 8, 4.5, "none", '+', 2))
-    #pattern = ((1, 8, 1, "none", '=', 3), (5, 8, 1, "none", '+', 3), (1, 8, 1.5, "none", '=', 3), (5, 8, 1.5, "none", '+', 3), (2, 8, 2, "diese", '-', 3), (3, 8, 2.5, "none", '+', 3), (1, 8, 3, "none", '=', 3), (5, 8, 3, "none", '+', 3), (1, 8, 3.5, "none", '=', 3), (5, 8, 3.5, "none", '+', 3), (1, 8, 4, "none", '=', 3), (6, 8, 4, "none", '+', 3), (1, 8, 4.5, "none", '=', 3), (6, 8, 4.5, "none", '+', 3))
+def generate_pattern(progression_list, key = "C", pattern_index = 0, nb_bars=1):
+    pattern = patterns.PATTERNS[pattern_index]
     t = Track()
     for progression in progression_list:
         progression = progression_to_int(progression)
@@ -66,7 +65,6 @@ def generate_pattern(progression_list, key = "C", pattern = ((1, 4, 1, "none", '
                 position_note+=1
                 
             t.add_bar(b)
-    print(str(t))
                     
     #track = LilyPond.from_Track(t)
     #test = LilyPond.to_png(track, "left_hand")

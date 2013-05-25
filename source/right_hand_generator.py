@@ -5,7 +5,6 @@ from mingus.containers.Note import Note
 from right_hand import get_note
 
 def use_phrase(phrase_list, progression_list, nb_bars, mode='none', key="C"):
-    print(str(progression_list))
     t = Track()
     if nb_bars == 1 :
         nb_p = 0
@@ -14,7 +13,6 @@ def use_phrase(phrase_list, progression_list, nb_bars, mode='none', key="C"):
                 phrase = get_phrase(progression, phrase_list)
                 last_note = None
                 for bars in phrase[1][3] :
-                    print(str(bars))
                     list_bar = generate_bar(last_note, bars, key)
                     b = list_bar[0]
                     last_note = list_bar[1]

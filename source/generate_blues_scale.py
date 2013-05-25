@@ -14,7 +14,6 @@ This function will raise an !NoteFormatError if the key isn't recognised"""
     result = []
     
     fifth_index = notes.fifths.index(key[0])
-    print("fifth_index"+str(fifth_index))
 
     """result.append(notes.fifths[(fifth_index - 1) % 7] + key[1:])
     print("result : "+str(result))
@@ -43,6 +42,4 @@ This function will raise an !NoteFormatError if the key isn't recognised"""
     result = result[tonic:] + result[:tonic]
 
     return result
-
-print(str(generate_blues_scale()))
 

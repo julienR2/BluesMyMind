@@ -27,6 +27,5 @@ def on_progression_type_change(progression_type, nb_bars):
         progression = choose_progression(progression_type, nb_bars_left)
         list_progression.append(progression)
     #on change la base de fait universelle contenant la progression du morceau
-    print(str(list_progression))
     return list_progression
     

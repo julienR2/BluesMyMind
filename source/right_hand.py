@@ -151,7 +151,6 @@ def common_note(phrase1, phrase2, key):
 
 
 def velocity_phrase(phrase):
-    print(str(phrase))
     number_notes = 0
     for bars in phrase[3] :
         for note in bars :

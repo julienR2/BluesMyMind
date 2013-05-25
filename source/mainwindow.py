@@ -9,6 +9,7 @@
 
 from PyQt4 import QtCore, QtGui
 import patterns, play_pattern, generate_composition
+import mingus.extra.LilyPond as LilyPond
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -124,22 +125,17 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         
     def handlePlayPattern(self):
-        play_pattern.play_pattern(patterns.PATTERNS[self.patternBox.currentIndex()], str(self.gammeBox.currentText()))
+        play_pattern.play_pattern(self.patternBox.currentIndex(), str(self.gammeBox.currentText()))
         
     def handleValidateButton(self):
-        pattern = patterns.PATTERNS[self.patternBox.currentIndex()]
-        print "pattern : " + str(pattern) + " - " + str(type(pattern))
+        pattern_index = self.patternBox.currentIndex()
         gamme= self.gammeBox.currentText()
-        print "gamme : " + gamme + " - " + str(type(gamme))
         structure = self.structureBox.currentText()
-        print "structure : " + structure + " - " + str(type(structure))
         longueur = self.longueurText.text()
-        print "longueur : " + longueur + " - " + str(type(longueur))
         tempo = self.tempoBox.currentText()
-        print "tempo : " + tempo + " - " + str(type(tempo))
         if self.modeBox.currentIndex() == 0:
             mode = "none"
-        print "mode : " + mode + " - " + str(type(mode))
-        generate_composition.generate_composition(pattern, int(structure), int(longueur), mode, str(gamme), int(tempo))
-        
+        myComposition = generate_composition.generate_composition(pattern_index, int(structure), int(longueur), mode, str(gamme), int(tempo))
+        print("Generate composition : DONE")
+        #LilyPond.to_pdf(LilyPond.from_Composition(myComposition), "myComposition")
         
