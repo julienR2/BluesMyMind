@@ -3,8 +3,11 @@ from mingus.containers.Bar import Bar
 from pattern_utils import chord_length
 from mingus.containers.Note import Note
 from right_hand import get_note
+import mingus.core.intervals as intervals
+
 
 def use_phrase(phrase_list, progression_list, nb_bars, mode='none', key="C"):
+    print(str(progression_list))
     t = Track()
     if nb_bars == 1 :
         nb_p = 0
@@ -13,7 +16,8 @@ def use_phrase(phrase_list, progression_list, nb_bars, mode='none', key="C"):
                 phrase = get_phrase(progression, phrase_list)
                 last_note = None
                 for bars in phrase[1][3] :
-                    list_bar = generate_bar(last_note, bars, key)
+                    print(str(bars))
+                    list_bar = generate_bar(last_note, bars, key, mode, progression)
                     b = list_bar[0]
                     last_note = list_bar[1]
                     t.add_bar(b)
@@ -45,7 +49,13 @@ def get_phrase(progression, phrase_list):
             if phrase[0] == 5 :
                 return phrase
             
-def generate_bar(previews_note, bar, key):
+def generate_bar(previews_note, bar, key, mode, progression):
+    if mode == 'mixolydien' :
+        if progression == 'IV' :
+            key = intervals.fourth(key, key)
+        elif progression == 'V' :
+            key = intervals.fifth(key, key)
+        
     b = Bar(key, (4, 4))
     position_note = 0
     already_used=[]
@@ -91,6 +101,6 @@ def generate_bar(previews_note, bar, key):
                 b.place_notes(note, bar_note[1])
                 already_used.append(position_note)
         position_note+=1
- 
+     
     return (b, previews_note)
             

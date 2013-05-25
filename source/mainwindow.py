@@ -135,7 +135,7 @@ class Ui_MainWindow(object):
         tempo = self.tempoBox.currentText()
         if self.modeBox.currentIndex() == 0:
             mode = "none"
+        else:
+            mode = "mixolydien"
         myComposition = generate_composition.generate_composition(pattern_index, int(structure), int(longueur), mode, str(gamme), int(tempo))
         print("Generate composition : DONE")
-        #LilyPond.to_pdf(LilyPond.from_Composition(myComposition), "myComposition")
-        

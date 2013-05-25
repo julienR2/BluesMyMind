@@ -18,6 +18,7 @@ def generate_composition(pattern_index, progression_type, nb_bars, mode='none', 
     
     left_hand = generate_pattern(progression_list, key, pattern_index, nb_bars)
     newComposition.add_track(left_hand)
+    MidiFileOut.write_Composition("myCompo.mid", newComposition, rythm, False)
    
     return newComposition
 
@@ -25,8 +26,5 @@ def save_as_midi(name, composition, rythm):
     MidiFileOut.write_Composition(name+".mid", composition, rythm, False)
 
 #TODO save_as_pdf
-
-
-#example : generate_composition(((1, 8, 1, "none", '=', 2), (5, 8, 1, "none", '+', 2), (1, 8, 1.5, "none", '=', 2), (5, 8, 1.5, "none", '+', 2), (2, 8, 2, "diese", '=', 2), (3, 8, 2.5, "none", '+', 2), (1, 8, 3, "none", '=', 2), (5, 8, 3, "none", '+', 2), (1, 8, 3.5, "none", '=', 2), (5, 8, 3.5, "none", '+', 2), (2, 8, 4, "diese", '=', 2), (3, 8, 4.5, "none", '+', 2)), 12, 1, 'none', "D", 60)    
 
 
