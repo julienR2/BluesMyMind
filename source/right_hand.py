@@ -110,8 +110,8 @@ def calcul_compatibility(phrase1, phrase2, key, mode):
     
     gap = gap_last_first_note(phrase1, phrase2, key, mode)
     
-    if gap < 15 :
-        compatibility += 14 - gap
+    if gap < 12 :
+        compatibility += 11 - gap
     
     return compatibility
     
@@ -205,7 +205,6 @@ def velocity_phrase(phrase):
 
 def get_note(n, key):
     
-    print("hellow "+str(n))
     note = intervals.unison(key)
     if n[0] == 1 :
         note = intervals.unison(key)

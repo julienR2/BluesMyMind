@@ -3,7 +3,7 @@ from mingus.containers.Note import Note
 from mingus.containers.Track import Track
 from pattern_utils import chord_length, get_note_pattern
 from progression_utils import get_progression_key, progression_to_int
-from source import patterns
+import patterns
 import mingus.core.intervals as intervals
 import mingus.core.notes as notes
 import mingus.extra.LilyPond as LilyPond #decommenter pour tester lilypond : > pdf

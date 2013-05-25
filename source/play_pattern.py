@@ -2,7 +2,7 @@ from mingus.containers.Bar import Bar
 from mingus.containers.Note import Note
 from mingus.midi import fluidsynth
 from pattern_utils import chord_length, get_note_pattern
-from source import patterns
+import patterns
 
 def play_pattern(pattern_index, key):
     pattern = patterns.PATTERNS[pattern_index]

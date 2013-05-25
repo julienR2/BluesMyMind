@@ -13,7 +13,7 @@ def generate_composition(pattern_index, progression_type, nb_bars, mode='none', 
     
      # truc pour la main droite
     phrase_list = choose_phrases(key, mode, nb_bars)
-    right_hand = use_phrase(phrase_list, progression_list, nb_bars, mode='none', key="C")
+    right_hand = use_phrase(phrase_list, progression_list, nb_bars, pattern_index, mode='none', key="C")
     newComposition.add_track(right_hand)
     
     left_hand = generate_pattern(progression_list, key, pattern_index, nb_bars)
