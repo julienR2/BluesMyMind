@@ -16,11 +16,14 @@ def use_phrase(phrase_list, progression_list, nb_bars, pattern_index, mode='none
             if nb_p%4 == 0 :
                 phrase = get_phrase(progression, phrase_list)
                 last_note = None
+                nb_bars = 0
                 for bars in phrase[1][3] :
                     print(str(bars))
-                    list_bar = generate_bar(last_note, bars, key, mode, progression, progression_list, nb_p, pattern_index)
+                    print("on est en a l'accord : "+str(progression_list[0][nb_p]))
+                    list_bar = generate_bar(last_note, bars, key, mode, progression, progression_list, nb_p+nb_bars, pattern_index)
                     b = list_bar[0]
                     last_note = list_bar[1]
+                    nb_bars+=1
                     t.add_bar(b)
 
                 if phrase[1][1] < 4 :
