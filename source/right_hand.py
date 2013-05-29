@@ -189,9 +189,15 @@ def common_note(phrase1, phrase2, key, mode):
 
 def velocity_phrase(phrase):
     number_notes = 0
+    note_temp = 0
+    
     for bars in phrase[3] :
         for note in bars :
-            number_notes+=1
+            if note_temp == 0:
+                number_notes+=1
+            if note[2]!=note_temp[2]:
+                number_notes+=1
+            note_temp = note
     
     if number_notes < 4*phrase[2] :
         return 1 #plutot lent
