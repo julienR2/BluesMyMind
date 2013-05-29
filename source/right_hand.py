@@ -58,8 +58,6 @@ def choose_phrases(key, mode, composition_length):
         phrase_5 = list_of_possible_5[index_phrase_5]
         phrase_5_chosen = [5, phrase_5]
         phrase_list.append(phrase_5_chosen)
-        
-        
     
     elif composition_length == 2 :
         nb_phrases = 5
@@ -154,11 +152,10 @@ def common_note(phrase1, phrase2, key, mode):
     phrase1_list = []
     percentage = 0
     number_notes = 0
-
     key1 = key
     key2 = key
-    if mode != "none" :
-            
+    
+    if mode != "none" :     
         if phrase1[0]==0 :
             key1 = key
         elif phrase1[0]==4 :

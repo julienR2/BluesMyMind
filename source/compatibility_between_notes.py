@@ -35,8 +35,7 @@ def get_best_note(note , list_left_note, note_list):
         while modif :
             nb_modif = 0
             note_str = intervals.unison(note.name, note.name)
-
-            for left_note in list_left_note :                
+            for left_note in list_left_note :    
                 if (intervals.measure(left_note, note_str)>2 and intervals.measure(left_note, note_str)<10) or intervals.measure(left_note, note_str)>11  :
                     print("note valide")
                 
@@ -52,14 +51,9 @@ def get_best_note(note , list_left_note, note_list):
                                 note_str = intervals.unison(note.name, note.name)
                                 nb_modif +=1
                     else : 
-                        if intervals.measure(left_note, note_str) == 1 :
-                            note.diminish()
-                            note_str = intervals.unison(note.name, note.name)
-                            nb_modif += 1
-                        elif intervals.measure(left_note, note_str) == 2 :  
-                            note.augment()
-                            note_str = intervals.unison(note.name, note.name)  
-                            nb_modif +=1   
+                        note.augment()
+                        note_str = intervals.unison(note.name, note.name)  
+                        nb_modif +=1   
                 
                 else :
                     if note_list[4]=="+":
@@ -73,15 +67,11 @@ def get_best_note(note , list_left_note, note_list):
                             note_str = intervals.unison(note.name, note.name)   
                             nb_modif +=1  
                     
-                    else : 
-                        if intervals.measure(note_str, left_note) == 1 :
-                            note.diminish()
-                            note_str = intervals.unison(note.name, note.name)
-                            nb_modif += 1
-                        elif intervals.measure(note_str, left_note) == 2 :  
-                            note.augment()
-                            note_str = intervals.unison(note.name, note.name)  
-                            nb_modif +=1      
+                    elif intervals.measure(left_note, note_str)>9: 
+                        note.augment()
+                        note_str = intervals.unison(note.name, note.name)  
+                        nb_modif +=1 
+                 
             if nb_modif == 0 :
                 modif = False
                  
