@@ -16,3 +16,5 @@ lib/
 virtualenv/
 
 *.pyc
+
+lib/.DS_Store
