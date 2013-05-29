@@ -15,18 +15,6 @@ This function will raise an !NoteFormatError if the key isn't recognised"""
     
     fifth_index = notes.fifths.index(key[0])
 
-    """result.append(notes.fifths[(fifth_index - 1) % 7] + key[1:])
-    print("result : "+str(result))
-    for x in notes.fifths[fifth_index:]:
-        print("je boucle dans 1")
-        result.append(x  + key[1:])
-        print("result"+str(result))
-
-    for x in notes.fifths[:(fifth_index - 1)]:
-        print("je boucle dans 2")
-        result.append(x + key[1:] + "#")
-        print("result"+str(result))"""
-    
     result.append(intervals.unison(key))
     result.append(notes.diminish(intervals.third(key,key)))
     result.append(intervals.third(key, key))

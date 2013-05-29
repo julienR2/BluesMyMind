@@ -65,12 +65,8 @@ def generate_pattern(progression_list, key = "C", pattern_index = 0, nb_bars=1):
                 position_note+=1
                 
             t.add_bar(b)
-                    
-    #track = LilyPond.from_Track(t)
-    #test = LilyPond.to_png(track, "left_hand")
-    #MidiFileOut.write_Track("test_midi.mid", t)
+
     return t
     #decommander les trois lignes precedentes pour tester si lilypond et fluidsynth marche (pdf et midi)
 
             
-#generate_pattern("D", ((1, 8, 1, "none", '=', 2), (5, 8, 1, "none", '+', 2), (1, 8, 1.5, "none", '=', 2), (5, 8, 1.5, "none", '+', 2), (2, 8, 2, "diese", '=', 2), (3, 8, 2.5, "none", '+', 2), (1, 8, 3, "none", '=', 2), (5, 8, 3, "none", '+', 2), (1, 8, 3.5, "none", '=', 2), (5, 8, 3.5, "none", '+', 2), (2, 8, 4, "diese", '=', 2), (3, 8, 4.5, "none", '+', 2)), 12, 3)

@@ -2,7 +2,6 @@ from right_hand import get_note
 import mingus.core.intervals as intervals
 import mingus.core.notes as notes
 from mingus.containers.Note import Note
-import mingus.core.notes as notes
 
 import patterns
 
@@ -27,40 +26,65 @@ def get_note_list_right_hand(bar, key, time):
     return list_note
 
 def get_best_note(note , list_left_note, note_list):
-
+    modif = True
     note_str = intervals.unison(note.name, note.name)
-    print("note_str = "+str(note_str))
-    print("note_left = "+str(list_left_note))
     
     if note_str in list_left_note :
         return note
     else :
-        while len(list_left_note) != 0 :
-            
-            print("liste_left_note : "+str(list_left_note))
+        while modif :
+            nb_modif = 0
             note_str = intervals.unison(note.name, note.name)
 
-            for left_note in list_left_note :
+            for left_note in list_left_note :                
                 if (intervals.measure(left_note, note_str)>2 and intervals.measure(left_note, note_str)<10) or intervals.measure(left_note, note_str)>11  :
-                    print("ecart grand, je supprime : "+str(intervals.measure(left_note, note_str)))
-                    list_left_note.remove(left_note)
-                else :
+                    print("note valide")
+                
+                elif intervals.measure(left_note, note_str) < 3 :
                     if note_list[4]=="+":
-                        while intervals.measure(left_note, note_str)<3 or (intervals.measure(left_note, note_str)>9 and intervals.measure(left_note, note_str)<12):
-                            print("j augmente")
-                            note.augment()
-                            note_str = intervals.unison(note.name, note.name)
-                        list_left_note.remove(left_note)
-
-                    else :
-                        while intervals.measure(left_note, note_str)!=0 or intervals.measure(left_note, note_str)>9 :
-                            print("je diminue")
+                        while intervals.measure(left_note, note_str) < 3 :
+                                note.augment()
+                                note_str = intervals.unison(note.name, note.name)  
+                                nb_modif +=1   
+                    elif note_list[4]=="-":
+                        while intervals.measure(left_note, note_str)!=0 :
+                                note.diminish()
+                                note_str = intervals.unison(note.name, note.name)
+                                nb_modif +=1
+                    else : 
+                        if intervals.measure(left_note, note_str) == 1 :
                             note.diminish()
                             note_str = intervals.unison(note.name, note.name)
-                        list_left_note.remove(left_note)
-
-
-    print("returned note : "+str(note))
+                            nb_modif += 1
+                        elif intervals.measure(left_note, note_str) == 2 :  
+                            note.augment()
+                            note_str = intervals.unison(note.name, note.name)  
+                            nb_modif +=1   
+                
+                else :
+                    if note_list[4]=="+":
+                        while intervals.measure(note_str, left_note) < 3 :
+                            note.augment()
+                            note_str = intervals.unison(note.name, note.name)  
+                            nb_modif +=1    
+                    elif note_list[4]=="-":
+                        while intervals.measure(note_str, left_note) != 0 :
+                            note.diminish()
+                            note_str = intervals.unison(note.name, note.name)   
+                            nb_modif +=1  
+                    
+                    else : 
+                        if intervals.measure(note_str, left_note) == 1 :
+                            note.diminish()
+                            note_str = intervals.unison(note.name, note.name)
+                            nb_modif += 1
+                        elif intervals.measure(note_str, left_note) == 2 :  
+                            note.augment()
+                            note_str = intervals.unison(note.name, note.name)  
+                            nb_modif +=1      
+            if nb_modif == 0 :
+                modif = False
+                 
                             
     return note
 
