@@ -2,9 +2,10 @@ from mingus.containers.Track import Track
 from mingus.containers.Bar import Bar
 from pattern_utils import chord_length
 from mingus.containers.Note import Note
-from right_hand import get_note
+from note_utils import get_note, get_phrase
 import mingus.core.intervals as intervals
 from compatibility_between_notes import change_note_if_needed
+from transition_utils import get_nb_note_needed
 
 
 def use_phrase(phrase_list, progression_list, nb_bars, pattern_index, mode='none', key="C"):
@@ -18,17 +19,32 @@ def use_phrase(phrase_list, progression_list, nb_bars, pattern_index, mode='none
                 last_note = None
                 nb_bars = 0
                 for bars in phrase[1][3] :
-                    print(str(bars))
-                    print("on est en a l'accord : "+str(progression_list[0][nb_p]))
                     list_bar = generate_bar(last_note, bars, key, mode, progression, progression_list, nb_p+nb_bars, pattern_index)
                     b = list_bar[0]
                     last_note = list_bar[1]
                     nb_bars+=1
                     t.add_bar(b)
+                    last_bar = bars
 
                 if phrase[1][1] < 4 :
                     # composer le reste TODO en attendant on met du vide
+                    last_bar_notes = list_bar[2]
+
+                    next_index = nb_p+4
+                    if next_index < 9 :
+                        next_progression = progression_list[0][next_index]
+                        next_phrase = get_phrase(next_progression, phrase_list)
+                        first_bar = next_phrase[1][3][0]
+                        first_bar_list = generate_bar(last_note, first_bar, key, mode, next_progression, progression_list, nb_p+4, pattern_index)
+                        first_bar_notes = first_bar_list[2]
+                        
+                        nb_notes_to_generate = get_nb_note_needed(last_bar, first_bar)
+                        
+                        
+                    #gerer si c'est la fin ! TODO
+                        
                     for i in range(4-phrase[1][1]):
+
                         b = Bar(key, (4,4))
                         b.place_rest(1)
                         t.add_bar(b)
@@ -39,19 +55,7 @@ def use_phrase(phrase_list, progression_list, nb_bars, pattern_index, mode='none
         return t
                     
 
-def get_phrase(progression, phrase_list):
-    for phrase in phrase_list : 
-        if progression == 'I' :
-            if phrase[0] == 1 :
-                return phrase
-            
-        elif progression == 'IV' :
-            if phrase[0] == 4 :
-                return phrase
-        
-        elif progression == 'V' :
-            if phrase[0] == 5 :
-                return phrase
+
             
 def generate_bar(previews_note, bar, key, mode, progression, progression_list, nb_p, pattern_index):
     if mode == 'mixolydien' :
@@ -63,6 +67,8 @@ def generate_bar(previews_note, bar, key, mode, progression, progression_list, n
     b = Bar(key, (4, 4))
     position_note = 0
     already_used=[]
+    list_note = []
+    
     for bar_note in bar :
         if position_note not in already_used :
             is_chord = chord_length(bar_note, bar, position_note)
@@ -85,6 +91,7 @@ def generate_bar(previews_note, bar, key, mode, progression, progression_list, n
                     
                     #appeler best_note la aussi
                     note_list.append(note)
+                    list_note.append(note)
                     
                 for n in range(is_chord[0], is_chord[1]+1):
                     already_used.append(n)
@@ -110,9 +117,10 @@ def generate_bar(previews_note, bar, key, mode, progression, progression_list, n
                 note = change_note_if_needed(bar_note[2], note, pattern_index, current_progression, bar_note, key)
                             
                 previews_note = int(note)
+                list_note.append(note)
                 b.place_notes(note, bar_note[1])
                 already_used.append(position_note)
         position_note+=1
      
-    return (b, previews_note)
+    return (b, previews_note, list_note)
             

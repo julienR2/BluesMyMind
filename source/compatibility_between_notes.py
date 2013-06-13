@@ -74,8 +74,7 @@ def get_best_note(note , list_left_note, note_list):
                  
             if nb_modif == 0 :
                 modif = False
-                 
-                            
+                                          
     return note
 
 def change_note_if_needed(time, note, pattern_index, progression, note_list, key):
