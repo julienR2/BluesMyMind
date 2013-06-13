@@ -44,7 +44,6 @@ def use_phrase(phrase_list, progression_list, nb_bars, pattern_index, mode='none
                     #gerer si c'est la fin ! TODO
                         
                     for i in range(4-phrase[1][1]):
-
                         b = Bar(key, (4,4))
                         b.place_rest(1)
                         t.add_bar(b)

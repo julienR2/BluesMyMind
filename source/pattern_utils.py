@@ -42,7 +42,7 @@ def chord_length(pattern_note, pattern, position_note):
 def get_pattern_velocity(pattern):
     number_notes = 0
     note_temp = 0
-    if pattern.length < 2:
+    if len(pattern) < 2:
         return 1
     else :
         for note in pattern :

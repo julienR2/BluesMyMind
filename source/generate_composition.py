@@ -18,7 +18,7 @@ def generate_composition(pattern_index, progression_type, nb_bars, mode='none', 
     else :
         chorus = generate_chorus(progression_list, pattern_index, mode, key)
         #chorus retourne : une phrase de debut, une phrase de fin, 3 bars fixes
-        phrase_list = choose_first_phrases(nb_bars, key, mode, chorus[0], chorus[1])
+        phrase_list = choose_first_phrases(nb_bars, key, mode, chorus[1], chorus[2], pattern_index)
         right_hand = generate_long_right_hand(phrase_list, progression_list, nb_bars, pattern_index, mode, key, chorus)
     
     newComposition.add_track(right_hand)
