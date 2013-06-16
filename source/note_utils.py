@@ -39,3 +39,17 @@ def get_phrase(progression, phrase_list):
         elif progression == 'V' :
             if phrase[0] == 5 :
                 return phrase
+            
+#pour une note au format liste    
+def augmente_note (note, hauteur):
+    if note[0] + hauteur > 7:
+        return ((note[0]+hauteur)%7, note[1], note[2], note[3], note[4], note[5]+1)
+    else:
+        return (note[0]+hauteur, note[1], note[2], note[3], note[4], note[5])
+
+#pour une note au format liste
+def diminue_note(note, hauteur):
+    if note[0] - hauteur < 1:
+        return (7-abs(note[0]-hauteur), note[1], note[2], note[3], note[4], note[5]-1)
+    else:
+        return (note[0]-hauteur, note[1], note[2], note[3], note[4], note[5])

@@ -1,12 +1,13 @@
-from mingus.containers.Track import Track
-from mingus.containers.Bar import Bar
-from pattern_utils import chord_length
-from mingus.containers.Note import Note
-from note_utils import get_note, get_phrase
-import mingus.core.intervals as intervals
 from compatibility_between_notes import change_note_if_needed
-from transition_utils import get_nb_note_needed
 from end_generator import generate_end_bars
+from mingus.containers.Bar import Bar
+from mingus.containers.Note import Note
+from mingus.containers.Track import Track
+from note_utils import get_note, get_phrase
+from pattern_utils import chord_length
+from source.transition_utils import generate_transition
+from transition_utils import get_nb_note_needed
+import mingus.core.intervals as intervals
 
 
 def use_phrase(phrase_list, progression_list, nb_bars, pattern_index, mode='none', key="C"):
@@ -41,11 +42,13 @@ def use_phrase(phrase_list, progression_list, nb_bars, pattern_index, mode='none
                         first_bar_notes = first_bar_list[2]
                         
                         nb_notes_to_generate = get_nb_note_needed(last_bar, first_bar)
+                        
+                        print "****************** je vais generer la transition ! ****************"
+                        transition_bar = generate_transition(first_bar_notes, last_bar_notes, nb_notes_to_generate, pattern_index, key)
+                        print "***************************** Fini ! ******************************"
                                                 
-                        for i in range(4-phrase[1][1]):
-                            b = Bar(key, (4,4))
-                            b.place_rest(1)
-                            t.add_bar(b)
+                        for i in range(len(transition_bar)):
+                            t.add_bar(transition_bar[i])
                     else :
                         list_end = generate_end_bars(bars, list_bar[2], pattern_index, key, mode)
                         for end_bar in list_end :
