@@ -82,17 +82,10 @@ def generate_end_bars(previews_bar, previews_bar_notes, pattern_index, key, mode
     # on genere deux mesures de fin
     # previews_bar = format de la bdd
     nb_notes = get_nb_notes(previews_bar)
-    print("nb_notes : "+str(nb_notes))
     first_bar = Bar()
     last_bar = Bar()
-    print("previews_bar_notes : "+ str(previews_bar_notes))
     last_index = len(previews_bar_notes)-1
     last_note = previews_bar_notes[last_index]
-    """while last_note is None :
-        if previews_bar_notes[last_index][2] is not None :
-            last_note = previews_bar_notes[last_index]
-        else :
-            last_index -=  1"""
     
     for i in range(1, nb_notes[0]):
         time = first_bar.current_beat + 1
@@ -103,6 +96,12 @@ def generate_end_bars(previews_bar, previews_bar_notes, pattern_index, key, mode
         chosen_length = list_length[random.randint(0, len(list_length)-1)]
         first_bar.place_notes(chosen_note.name, chosen_length)
         
+    if first_bar.length - first_bar.current_beat != 0 : 
+        print("ajout de silence")
+        space_left = 1.0 / (first_bar.length - first_bar.current_beat)
+        first_bar.place_rest(space_left)
+    
+        
     for i in range(1, nb_notes[1]):
         time = last_bar.current_beat + 1
         list_compatible = get_compatible_notes(pattern_index, previews_bar_notes, key, time)
@@ -111,22 +110,51 @@ def generate_end_bars(previews_bar, previews_bar_notes, pattern_index, key, mode
         chosen_note = best_notes[random.randint(0, len(best_notes)-1)]
         chosen_length = list_length[random.randint(0, len(list_length)-1)]
         #chosen_note.octave
+        
+        chord_possible = []
+        chord_possible.append(intervals.unison(key, key))
+        chord_possible.append(intervals.fourth(key, key))
+        chord_possible.append(intervals.fifth(key, key))
+        
+        intervals_last = []
+        
+        for note_possible in chord_possible :
+            test = []
+            test.append(intervals.measure(note_possible, last_note.name))
+            test.append(intervals.measure(last_note.name, note_possible))
+            intervals_last.append(min(test))
+        
+        for i,j in enumerate(intervals_last) :
+            if j == min(intervals_last) :
+                index = i
+                break
+            
+        chosen_chord = chord_possible[index] 
+        
         if mode == "mixolydien" :
-            chord = chords.seventh(chosen_note.name, key)
+                            
+            chord = chords.triad(chosen_chord, key)
             chord_list = []
             for note in chord :
                 note_m = Note(note, chosen_note.octave)
                 chord_list.append(note_m)
+                last_note = note_m
             last_bar.place_notes(chord_list, chosen_length)
         else :
-            chord = chords.triad(chosen_note.name, key)
+            chord = chords.triad(chosen_chord, key)
             chord_list = []
             for note in chord :
                 note_m = Note(note, chosen_note.octave)
+                last_note = note_m
                 chord_list.append(note_m)
             last_bar.place_notes(chord_list, chosen_length)
             
-        return [first_bar, last_bar]
+    if last_bar.length - first_bar.current_beat != 0 : 
+        print("ajout de silence")
+        space_left = 1.0 / (last_bar.length - last_bar.current_beat)
+        last_bar.place_rest(space_left)     
+            
+    return [first_bar, last_bar]
         
         
         

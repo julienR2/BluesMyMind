@@ -56,8 +56,9 @@ def generate_chorus(progression_list, pattern_index, mode, key):
     notes_4=[]
     
     chorus = generate_chorus_bars(phrase_list, progression_list, 1, pattern_index, mode, key)
+    last_notes = chorus[4]
    
-    return (chorus, phrase_4_chosen, phrase_5_chosen)
+    return (chorus, phrase_4_chosen, phrase_5_chosen, last_notes)
     
     # on a les deux phrases du refrain ! 
     # on va generer les bars et la transition
@@ -143,18 +144,15 @@ def generate_long_right_hand(phrase_list, progression_list, nb_bars, pattern_ind
         for chorus_bars in chorus[0][2] :
             t.add_bar(chorus_bars)
             
-        """"if k == len(phrase_list) :
-            print("bar : "+str(chorus[0][3]))
-            print("note bar : "+str(chorus[0][2][1]))
-            list_end = generate_end_bars(chorus[0][3], chorus[0][2][1], pattern_index, key, mode)
+        if k == len(phrase_list) :
+            list_end = generate_end_bars(chorus[0][2][1], chorus[3], pattern_index, key, mode)
             for end_bar in list_end :
                 t.add_bar(end_bar)
-        """
+        
         #generer transition vers la phrase suivante
         #ou generer la fin
 
 
-            
         for i in range(2): 
             b = Bar(key, (4,4))
             b.place_rest(1)
@@ -190,6 +188,8 @@ def generate_chorus_bars(phrase_list, progression_list, nb_bars, pattern_index, 
                     last_note = list_bar[1]
                     nb_bars+=1
                     last_bar = bars
+                
+                last_notes = list_bar[2]
 
                 if phrase[1][1] < 4 and nb_p+nb_bars < 10:
                     # composer le reste TODO en attendant on met du vide
@@ -220,7 +220,7 @@ def generate_chorus_bars(phrase_list, progression_list, nb_bars, pattern_index, 
             
             last_bar_chorus = phrase[1][3][len(phrase[1][3])-1]
             
-    return (chorus, transition, chorus_ordered_bars, last_bar_chorus)
+    return (chorus, transition, chorus_ordered_bars, last_bar_chorus, last_notes)
 
 
 def choose_best_phrase(list_possible, first_phrase, key, mode):
