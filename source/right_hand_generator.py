@@ -6,6 +6,7 @@ from note_utils import get_note, get_phrase
 import mingus.core.intervals as intervals
 from compatibility_between_notes import change_note_if_needed
 from transition_utils import get_nb_note_needed
+from end_generator import generate_end_bars
 
 
 def use_phrase(phrase_list, progression_list, nb_bars, pattern_index, mode='none', key="C"):
@@ -29,6 +30,7 @@ def use_phrase(phrase_list, progression_list, nb_bars, pattern_index, mode='none
                 if phrase[1][1] < 4 :
                     # composer le reste TODO en attendant on met du vide
                     last_bar_notes = list_bar[2]
+                    print("lala "+str(last_bar_notes))
 
                     next_index = nb_p+4
                     if next_index < 9 :
@@ -39,14 +41,18 @@ def use_phrase(phrase_list, progression_list, nb_bars, pattern_index, mode='none
                         first_bar_notes = first_bar_list[2]
                         
                         nb_notes_to_generate = get_nb_note_needed(last_bar, first_bar)
+                                                
+                        for i in range(4-phrase[1][1]):
+                            b = Bar(key, (4,4))
+                            b.place_rest(1)
+                            t.add_bar(b)
+                    else :
+                        list_end = generate_end_bars(bars, list_bar[2], pattern_index, key, mode)
+                        for end_bar in list_end :
+                            t.add_bar(end_bar)
                         
-                        
-                    #gerer si c'est la fin ! TODO
-                        
-                    for i in range(4-phrase[1][1]):
-                        b = Bar(key, (4,4))
-                        b.place_rest(1)
-                        t.add_bar(b)
+                        break
+                    
                 nb_p +=1
             else :
                 nb_p +=1

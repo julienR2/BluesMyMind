@@ -7,6 +7,7 @@ from right_hand_generator import generate_bar
 from transition_utils import *
 from mingus.containers.Bar import Bar
 from mingus.containers.Track import Track
+from end_generator import generate_end_bars
 
 
 def generate_chorus(progression_list, pattern_index, mode, key):
@@ -102,9 +103,10 @@ def use_long_right_hand(progression_list, pattern_index, mode, key, nb_bars):
 
 def generate_long_right_hand(phrase_list, progression_list, nb_bars, pattern_index, mode, key, chorus):
     t = Track()
-
+    k = 0
     # on parcours la liste de phrases 
     for phrase in phrase_list :
+        k += 1
         previews_note = None
         nb_p = 0
         for bar in phrase[1][3] :
@@ -140,14 +142,24 @@ def generate_long_right_hand(phrase_list, progression_list, nb_bars, pattern_ind
         # on ajoute le refrain
         for chorus_bars in chorus[0][2] :
             t.add_bar(chorus_bars)
-        
+            
+        """"if k == len(phrase_list) :
+            print("bar : "+str(chorus[0][3]))
+            print("note bar : "+str(chorus[0][2][1]))
+            list_end = generate_end_bars(chorus[0][3], chorus[0][2][1], pattern_index, key, mode)
+            for end_bar in list_end :
+                t.add_bar(end_bar)
+        """
+        #generer transition vers la phrase suivante
+        #ou generer la fin
+
+
             
         for i in range(2): 
             b = Bar(key, (4,4))
             b.place_rest(1)
             t.add_bar(b)
             
-        #generer transition vers la phrase suivante
         
         
             
@@ -206,7 +218,9 @@ def generate_chorus_bars(phrase_list, progression_list, nb_bars, pattern_index, 
                 nb_p +=1
                 continue
             
-    return (chorus, transition, chorus_ordered_bars)
+            last_bar_chorus = phrase[1][3][len(phrase[1][3])-1]
+            
+    return (chorus, transition, chorus_ordered_bars, last_bar_chorus)
 
 
 def choose_best_phrase(list_possible, first_phrase, key, mode):
@@ -241,6 +255,7 @@ def choose_between_phrase(list_possible, first_phrase, last_phrase, key, mode, n
         for i,j in enumerate(compatibility_first):
             if j == min_first or j == min_last :
                 list_possible.remove(list_possible[i])
+                break
                 
     return list_possible
                 
