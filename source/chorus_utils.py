@@ -133,12 +133,12 @@ def generate_long_right_hand(phrase_list, progression_list, nb_bars, pattern_ind
               
                 nb_notes_to_generate = get_nb_note_needed(last_bar, first_bar)
               
-                  
-            for i in range(4-phrase[1][1]):
-            
-                b = Bar(key, (4,4))
-                b.place_rest(1)
-                t.add_bar(b)
+                print "****************** je vais generer la transition ! ****************"
+                transition_bar = generate_transition(first_bar_notes, last_bar_notes, nb_notes_to_generate, pattern_index, key)
+                print "***************************** Fini ! ******************************"
+                                                
+                for i in range(len(transition_bar)):
+                    t.add_bar(transition_bar[i])
         
         # on ajoute le refrain
         for chorus_bars in chorus[0][2] :
@@ -206,12 +206,12 @@ def generate_chorus_bars(phrase_list, progression_list, nb_bars, pattern_index, 
                         nb_notes_to_generate = get_nb_note_needed(last_bar, first_bar)        
                         
                     #gerer si c'est la fin ! TODO
-                        
-                    for i in range(4-phrase[1][1]):
-                        b = Bar(key, (4,4))
-                        b.place_rest(1)
-                        transition.append(b)
-                        chorus_ordered_bars.append(b)
+                        print "****************** je vais generer la transition ! ****************"
+                        transition_bar = generate_transition(first_bar_notes, last_bar_notes, nb_notes_to_generate, pattern_index, key)
+                        print "***************************** Fini ! ******************************"
+                                                
+                    for i in range(len(transition_bar)):
+                        chorus_ordered_bars.append(transition_bar[i])
 
                 nb_p +=1
             else :

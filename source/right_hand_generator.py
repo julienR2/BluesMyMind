@@ -5,7 +5,7 @@ from mingus.containers.Note import Note
 from mingus.containers.Track import Track
 from note_utils import get_note, get_phrase
 from pattern_utils import chord_length
-from source.transition_utils import generate_transition
+from transition_utils import generate_transition
 from transition_utils import get_nb_note_needed
 import mingus.core.intervals as intervals
 
@@ -18,6 +18,7 @@ def use_phrase(phrase_list, progression_list, nb_bars, pattern_index, mode='none
         for progression in progression_list[0] :
             if nb_p%4 == 0 :
                 phrase = get_phrase(progression, phrase_list)
+                print("boucle phrase doit apparaitre trois fois")
                 last_note = None
                 nb_bars = 0
                 for bars in phrase[1][3] :
@@ -46,9 +47,11 @@ def use_phrase(phrase_list, progression_list, nb_bars, pattern_index, mode='none
                         print "****************** je vais generer la transition ! ****************"
                         transition_bar = generate_transition(first_bar_notes, last_bar_notes, nb_notes_to_generate, pattern_index, key)
                         print "***************************** Fini ! ******************************"
-                                                
-                        for i in range(len(transition_bar)):
-                            t.add_bar(transition_bar[i])
+                        
+                        for transition in transition_bar :
+                            t.add_bar(transition)                        
+                        """for i in range(len(transition_bar)):
+                            t.add_bar(transition_bar[i])"""
                     else :
                         list_end = generate_end_bars(bars, list_bar[2], pattern_index, key, mode)
                         for end_bar in list_end :

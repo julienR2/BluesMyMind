@@ -1,9 +1,8 @@
 from generate_blues_scale import generate_blues_scale
 from mingus.containers.Bar import Bar
 from mingus.containers.Note import Note
-from source import phrases
-from source.end_generator import get_compatible_notes, get_max_length_note, \
-    get_best_notes
+import phrases
+from end_generator import get_compatible_notes, get_max_length_note, get_best_notes
 import random
 
 def get_nb_note_needed(last_bar, first_bar):
@@ -76,7 +75,19 @@ def generate_transition(previous_phrase, next_phrase, nb_note_needed, pattern_in
         best_notes = get_best_notes_transition(list_compatible, previous_note, next_note, 1, float(i)/nb_note_needed[1])
         chosen_note = best_notes[random.randint(0, len(best_notes)-1)]
         chosen_length = list_length[random.randint(0, len(list_length)-1)]
-        first_bar.place_notes(chosen_note.name, chosen_length)
+        last_bar.place_notes(chosen_note.name, chosen_length)
+    
+    if last_bar.length - last_bar.current_beat != 0 : 
+        print("ajout de silence")
+        space_left = 1.0 / (last_bar.length - last_bar.current_beat)
+        last_bar.place_rest(space_left) 
+    
+    if first_bar.length - first_bar.current_beat != 0 : 
+        print("ajout de silence")
+        space_left = 1.0 / (first_bar.length - first_bar.current_beat)
+        first_bar.place_rest(space_left)         
+    
+    
         
     return [first_bar, last_bar]
         

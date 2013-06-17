@@ -149,7 +149,7 @@ def generate_end_bars(previews_bar, previews_bar_notes, pattern_index, key, mode
                 chord_list.append(note_m)
             last_bar.place_notes(chord_list, chosen_length)
             
-    if last_bar.length - first_bar.current_beat != 0 : 
+    if last_bar.length - last_bar.current_beat != 0 : 
         print("ajout de silence")
         space_left = 1.0 / (last_bar.length - last_bar.current_beat)
         last_bar.place_rest(space_left)     
